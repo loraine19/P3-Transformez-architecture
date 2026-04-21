@@ -15,6 +15,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    // DONE: Added tags relationship for user-owned tags.
+
     // fields allowed for mass assignment
     protected $fillable = [
         'name',
@@ -50,5 +52,12 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /* PUBLIC METHOD */
+    /* tags */
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
     }
 }

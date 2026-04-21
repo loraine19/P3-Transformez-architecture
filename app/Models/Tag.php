@@ -12,10 +12,20 @@ class Tag extends Model
 {
     use HasFactory;
 
-    // only name is allowed for mass assignment
+    // DONE: Added user ownership field for tag security.
+    // only these fields are allowed for mass assignment
     protected $fillable = [
+        'user_id',
         'name',
     ];
+
+    /* PUBLIC METHOD */
+    /* user */
+    public function user()
+    {
+        // DONE: Tag now belongs to one user.
+        return $this->belongsTo(User::class);
+    }
 
     /* PUBLIC METHOD */
     /* notes */

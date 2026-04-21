@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,6 +18,8 @@ class TagFactory extends Factory
     public function definition(): array
     {
         return [
+            // DONE: Tag factory now creates an owner user.
+            'user_id' => User::factory(),
             'name' => $this->faker->word(),
         ];
     }
