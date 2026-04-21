@@ -1,4 +1,6 @@
 <?php
+// Controller - verify user email after clicking link in email
+// invokable controller = one method only, like a single-purpose use case
 
 namespace App\Http\Controllers\Auth;
 
@@ -7,13 +9,14 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 
+/* CLASS */
 class VerifyEmailController extends Controller
 {
-    /**
-     * Mark the authenticated user's email address as verified.
-     */
+    /* PUBLIC METHOD */
+    /* __invoke */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
+        // if already verified just redirect - nothing to do
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
         }
@@ -22,6 +25,7 @@ class VerifyEmailController extends Controller
             /** @var \Illuminate\Contracts\Auth\MustVerifyEmail $user */
             $user = $request->user();
 
+            // fire Verified event - Laravel uses it to trigger notifications
             event(new Verified($user));
         }
 

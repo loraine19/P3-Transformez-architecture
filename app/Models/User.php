@@ -1,4 +1,6 @@
 <?php
+// User model - user account, handles login and auth
+// extends Authenticatable so Laravel handles login/logout automatically
 
 namespace App\Models;
 
@@ -8,50 +10,41 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
+/* CLASS */
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    // fields allowed for mass assignment
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+    // never send these fields in json response - security
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    /* PRIVATE METHOD */
+    /* casts */
     protected function casts(): array
     {
         return [
+            // store as datetime not string
             'email_verified_at' => 'datetime',
+            // auto hash password on save - no need to hash manually
             'password' => 'hashed',
         ];
     }
 
-    /**
-     * Get the user's initials
-     */
+    /* PUBLIC METHOD */
+    /* initials */
     public function initials(): string
     {
+        // get first letter of each word - used for avatar initials fallback in the view
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)

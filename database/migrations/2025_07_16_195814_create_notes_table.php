@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// renamed from 195507 to 195814 to run after tags table (foreign key dependency)
 return new class extends Migration
 {
     /**
