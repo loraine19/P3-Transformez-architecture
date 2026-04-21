@@ -5,7 +5,7 @@ use App\Http\Controllers\API\NoteController;
 use App\Http\Controllers\API\TagController;
 use Illuminate\Support\Facades\Route;
 
-// DONE: Added v1 API stub endpoints for auth, notes, and tags.
+// DONE: Protected routes with auth:sanctum middleware - public: register/login, protected: logout/notes/tags.
 
 /*
 |--------------------------------------------------------------------------
@@ -17,14 +17,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function (): void {
+    // public routes - no token required
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/notes', [NoteController::class, 'index']);
-    Route::post('/notes', [NoteController::class, 'store']);
-    Route::delete('/notes/{note}', [NoteController::class, 'destroy']);
+    // protected routes - valid Bearer token required, 401 if missing or invalid
+    Route::middleware('auth:sanctum')->group(function (): void {
+        Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/tags', [TagController::class, 'index']);
-    Route::post('/tags', [TagController::class, 'store']);
+        Route::get('/notes', [NoteController::class, 'index']);
+        Route::post('/notes', [NoteController::class, 'store']);
+        Route::delete('/notes/{note}', [NoteController::class, 'destroy']);
+
+        Route::get('/tags', [TagController::class, 'index']);
+        Route::post('/tags', [TagController::class, 'store']);
+    });
 });

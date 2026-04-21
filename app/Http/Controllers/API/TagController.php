@@ -1,12 +1,15 @@
 <?php
+// Tag controller - list and create endpoints
+// validates input, delegates to TagService, returns standard JSON
 
 namespace App\Http\Controllers\API;
 
 use App\Services\TagService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-// DONE: Added tags API actions with user ownership checks.
+// DONE: Cleaned up dead auth checks (handled by middleware), added validation pattern.
 
 class TagController extends BaseApiController
 {
@@ -14,33 +17,32 @@ class TagController extends BaseApiController
     {
     }
 
+    /* PUBLIC METHOD */
+    /* index */
     public function index(Request $request): JsonResponse
     {
-        $userId = $request->user()?->id;
-
-    /* Remove comments after test implement API--    if (!$userId) {
-            return $this->error('Unauthorized.', null, 401);
-        }*/
-
-        $tags = $this->tagService->listForUser($userId);
+        // list all tags belonging to the authenticated user
+        $tags = $this->tagService->listForUser($request->user()->id);
 
         return $this->success('Tags fetched successfully.', $tags);
     }
 
+    /* PUBLIC METHOD */
+    /* store */
     public function store(Request $request): JsonResponse
     {
-        $userId = $request->user()?->id;
-
-    /* Remove comments after test implement API--    if (!$userId) {
-            return $this->error('Unauthorized.', null, 401);
-        }*/
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+        // validate input - 422 if missing or malformed
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
         ]);
 
-        $tag = $this->tagService->create($validated, $userId);
+        if ($validator->fails()) {
+            return $this->error('Validation failed.', $validator->errors(), 422);
+        }
 
+        $tag = $this->tagService->create($validator->validated(), $request->user()->id);
+
+        // 201 created on success
         return $this->success('Tag created successfully.', $tag, 201);
     }
 }

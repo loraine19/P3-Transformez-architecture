@@ -1,26 +1,60 @@
 <?php
+// Note service - list, create, delete notes scoped to authenticated user
+// ownership enforced on delete - 403 if user does not own the note
 
 namespace App\Services;
 
-// DONE: Added notes service stubs used by NoteController.
+use App\Models\Note;
+
+// DONE: Implemented real note logic with user ownership enforcement.
 
 class NoteService
 {
-    public function listForUser(?int $userId = null): array
+    /* PUBLIC METHOD */
+    /* listForUser */
+    public function listForUser(int $userId): array
     {
-        return [];
+        // fetch only notes belonging to this user - eager load tag to avoid N+1
+        return Note::query()
+            ->where('user_id', $userId)
+            ->with('tag')
+            ->orderByDesc('created_at')
+            ->get(['id', 'user_id', 'tag_id', 'text', 'created_at'])
+            ->toArray();
     }
 
-    public function create(array $payload, ?int $userId = null): array
+    /* PUBLIC METHOD */
+    /* create */
+    public function create(array $payload, int $userId): array
     {
-        return [
-            'title' => $payload['title'] ?? null,
-            'content' => $payload['content'] ?? null,
-        ];
+        // attach user_id automatically - user cannot set it manually
+        $note = Note::create([
+            'user_id' => $userId,
+            'tag_id'  => $payload['tag_id'],
+            'text'    => $payload['text'],
+        ]);
+
+        return $note->only(['id', 'user_id', 'tag_id', 'text', 'created_at']);
     }
 
-    public function delete(int $noteId, ?int $userId = null): bool
+    /* PUBLIC METHOD */
+    /* delete */
+    public function delete(int $noteId, int $userId): string
     {
-        return true;
+        $note = Note::find($noteId);
+
+        // 404 if note does not exist
+        if ($note === null) {
+            return 'not_found';
+        }
+
+        // 403 if note belongs to another user - ownership check
+        if ($note->user_id !== $userId) {
+            return 'forbidden';
+        }
+
+        $note->delete();
+
+        return 'deleted';
     }
 }

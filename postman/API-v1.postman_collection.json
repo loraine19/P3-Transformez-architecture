@@ -1,7 +1,7 @@
 {
     "info": {
         "name": "API v1 - Step Progression",
-        "description": "Stub-mode collection for quick validation of all created API v1 endpoints.",
+        "description": "Step 3 collection aligned with Sanctum bearer auth and current API contracts.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_postman_id": "3c77e96d-d8d2-4fd8-85a6-7dd6583dfbee"
     },
@@ -14,11 +14,15 @@
                     {
                         "key": "Content-Type",
                         "value": "application/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
                     }
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+                    "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\",\n  \"password_confirmation\": \"{{userPassword}}\"\n}"
                 },
                 "url": {
                     "raw": "{{baseUrl}}/api/v1/register",
@@ -33,6 +37,16 @@
                 }
             },
             "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.environment.set('userEmail', `test.user.${Date.now()}@example.com`);",
+                            "pm.environment.set('userPassword', 'password123');"
+                        ]
+                    }
+                },
                 {
                     "listen": "test",
                     "script": {
@@ -58,11 +72,15 @@
                     {
                         "key": "Content-Type",
                         "value": "application/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
                     }
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\"\n}"
+                    "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}"
                 },
                 "url": {
                     "raw": "{{baseUrl}}/api/v1/login",
@@ -90,7 +108,11 @@
                             "try { json = pm.response.json(); } catch (e) {}",
                             "if (json && json.data && json.data.token) {",
                             "    pm.environment.set('token', json.data.token);",
-                            "}"
+                            "}",
+                            "",
+                            "pm.test('Token is returned', function () {",
+                            "    pm.expect(pm.environment.get('token')).to.be.a('string').and.not.empty;",
+                            "});"
                         ]
                     }
                 }
@@ -100,7 +122,16 @@
             "name": "Notes - List",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
                 "url": {
                     "raw": "{{baseUrl}}/api/v1/notes",
                     "host": [
@@ -128,6 +159,100 @@
             ]
         },
         {
+            "name": "Tags - List",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/api/v1/tags",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "tags"
+                    ]
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test('Tags list returns 200', function () {",
+                            "    pm.expect(pm.response.code).to.eql(200);",
+                            "});"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Tags - Create",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"postman-tag\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/v1/tags",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "tags"
+                    ]
+                }
+            },
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "pm.test('Tags create returns 201', function () {",
+                            "    pm.expect(pm.response.code).to.eql(201);",
+                            "});",
+                            "",
+                            "let json = {};",
+                            "try { json = pm.response.json(); } catch (e) {}",
+                            "if (json && json.data && json.data.id) {",
+                            "    pm.environment.set('tagId', json.data.id);",
+                            "}"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "name": "Notes - Create",
             "request": {
                 "method": "POST",
@@ -135,11 +260,19 @@
                     {
                         "key": "Content-Type",
                         "value": "application/json"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
                     }
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n  \"title\": \"Quick test note\",\n  \"content\": \"Created from Postman collection\"\n}"
+                    "raw": "{\n  \"text\": \"Created from Postman collection\",\n  \"tag_id\": {{tagId}}\n}"
                 },
                 "url": {
                     "raw": "{{baseUrl}}/api/v1/notes",
@@ -161,7 +294,13 @@
                         "exec": [
                             "pm.test('Notes create returns 201', function () {",
                             "    pm.expect(pm.response.code).to.eql(201);",
-                            "});"
+                            "});",
+                            "",
+                            "let json = {};",
+                            "try { json = pm.response.json(); } catch (e) {}",
+                            "if (json && json.data && json.data.id) {",
+                            "    pm.environment.set('noteId', json.data.id);",
+                            "}"
                         ]
                     }
                 }
@@ -171,7 +310,16 @@
             "name": "Notes - Delete",
             "request": {
                 "method": "DELETE",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
                 "url": {
                     "raw": "{{baseUrl}}/api/v1/notes/{{noteId}}",
                     "host": [
@@ -200,81 +348,19 @@
             ]
         },
         {
-            "name": "Tags - List",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{baseUrl}}/api/v1/tags",
-                    "host": [
-                        "{{baseUrl}}"
-                    ],
-                    "path": [
-                        "api",
-                        "v1",
-                        "tags"
-                    ]
-                }
-            },
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "type": "text/javascript",
-                        "exec": [
-                            "pm.test('Tags list returns 200 in stub mode', function () {",
-                            "    pm.expect(pm.response.code).to.eql(200);",
-                            "});"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Tags - Create",
+            "name": "Auth - Logout",
             "request": {
                 "method": "POST",
                 "header": [
                     {
-                        "key": "Content-Type",
+                        "key": "Accept",
                         "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
                     }
                 ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"name\": \"postman-tag\"\n}"
-                },
-                "url": {
-                    "raw": "{{baseUrl}}/api/v1/tags",
-                    "host": [
-                        "{{baseUrl}}"
-                    ],
-                    "path": [
-                        "api",
-                        "v1",
-                        "tags"
-                    ]
-                }
-            },
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "type": "text/javascript",
-                        "exec": [
-                            "pm.test('Tags create returns 201 in stub mode', function () {",
-                            "    pm.expect(pm.response.code).to.eql(201);",
-                            "});"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Auth - Logout",
-            "request": {
-                "method": "POST",
-                "header": [],
                 "url": {
                     "raw": "{{baseUrl}}/api/v1/logout",
                     "host": [

@@ -9,13 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\HasApiTokens; // DONE: added for Sanctum Bearer token support
 
 /* CLASS */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-
-    // DONE: Added tags relationship for user-owned tags.
+    use HasApiTokens, HasFactory, Notifiable;
 
     // fields allowed for mass assignment
     protected $fillable = [
@@ -58,6 +57,7 @@ class User extends Authenticatable
     /* tags */
     public function tags()
     {
+        // DONE: user has many tags - one-to-many like a sql join
         return $this->hasMany(Tag::class);
     }
 }

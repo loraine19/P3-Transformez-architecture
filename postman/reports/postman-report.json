@@ -5,7 +5,7 @@
     },
     "item": [
       {
-        "id": "2f95968c-5cf0-4f1e-bb48-523964d0d438",
+        "id": "0f981820-56ab-4b1a-ba06-1ba6c6e1d415",
         "name": "Auth - Register",
         "request": {
           "url": {
@@ -24,20 +24,36 @@
             {
               "key": "Content-Type",
               "value": "application/json"
+            },
+            {
+              "key": "Accept",
+              "value": "application/json"
             }
           ],
           "method": "POST",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\",\n  \"password_confirmation\": \"{{userPassword}}\"\n}"
           }
         },
         "response": [],
         "event": [
           {
+            "listen": "prerequest",
+            "script": {
+              "id": "82aed83b-c851-49a5-92d4-16378a916a97",
+              "type": "text/javascript",
+              "exec": [
+                "pm.environment.set('userEmail', `test.user.${Date.now()}@example.com`);",
+                "pm.environment.set('userPassword', 'password123');"
+              ],
+              "_lastExecutionId": "1e28e2c9-4cf1-4a8f-b46a-d192405644fa"
+            }
+          },
+          {
             "listen": "test",
             "script": {
-              "id": "796a3274-838b-4a98-bb16-f1be52000846",
+              "id": "342daacc-8a4e-442b-bf51-e3800e6625f5",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Register returns 200/201', function () {",
@@ -48,13 +64,13 @@
                 "    pm.response.to.be.json;",
                 "});"
               ],
-              "_lastExecutionId": "fbc24601-8df5-4a61-94b9-637e33fa3855"
+              "_lastExecutionId": "9f2cc85f-d6b3-473b-a13e-16b416e1cf95"
             }
           }
         ]
       },
       {
-        "id": "9ef108aa-24aa-4d15-8474-c25802402b5b",
+        "id": "30d73084-1e5c-446d-9c71-0045aaf1b778",
         "name": "Auth - Login",
         "request": {
           "url": {
@@ -73,12 +89,16 @@
             {
               "key": "Content-Type",
               "value": "application/json"
+            },
+            {
+              "key": "Accept",
+              "value": "application/json"
             }
           ],
           "method": "POST",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\"\n}"
+            "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}"
           }
         },
         "response": [],
@@ -86,7 +106,7 @@
           {
             "listen": "test",
             "script": {
-              "id": "e0effc5c-7fdd-484b-85b3-73362a7f8e05",
+              "id": "310ab9ed-6acd-4928-8183-f0d48517f190",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Login returns 200', function () {",
@@ -97,51 +117,20 @@
                 "try { json = pm.response.json(); } catch (e) {}",
                 "if (json && json.data && json.data.token) {",
                 "    pm.environment.set('token', json.data.token);",
-                "}"
-              ],
-              "_lastExecutionId": "0590b1d4-ec17-4c24-a3eb-e4f5a6c0de4b"
-            }
-          }
-        ]
-      },
-      {
-        "id": "aaafa61e-f2c2-4a8c-ab4a-8d4bb82423b1",
-        "name": "Notes - List",
-        "request": {
-          "url": {
-            "path": [
-              "api",
-              "v1",
-              "notes"
-            ],
-            "host": [
-              "{{baseUrl}}"
-            ],
-            "query": [],
-            "variable": []
-          },
-          "method": "GET"
-        },
-        "response": [],
-        "event": [
-          {
-            "listen": "test",
-            "script": {
-              "id": "45021cb0-ae5b-4c01-8879-b2ca9a9dec0c",
-              "type": "text/javascript",
-              "exec": [
-                "pm.test('Notes list returns 200', function () {",
-                "    pm.expect(pm.response.code).to.eql(200);",
+                "}",
+                "",
+                "pm.test('Token is returned', function () {",
+                "    pm.expect(pm.environment.get('token')).to.be.a('string').and.not.empty;",
                 "});"
               ],
-              "_lastExecutionId": "376f24fc-de42-46ab-b965-d468f8f3eee0"
+              "_lastExecutionId": "34eac8d3-a511-4bc2-a850-c9617a205078"
             }
           }
         ]
       },
       {
-        "id": "7993d988-f12d-4c20-a7c7-8d905ab308c3",
-        "name": "Notes - Create",
+        "id": "3bd89fc7-1142-46dc-89c1-2580a1e3198c",
+        "name": "Notes - List",
         "request": {
           "url": {
             "path": [
@@ -157,71 +146,35 @@
           },
           "header": [
             {
-              "key": "Content-Type",
+              "key": "Accept",
               "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
             }
           ],
-          "method": "POST",
-          "body": {
-            "mode": "raw",
-            "raw": "{\n  \"title\": \"Quick test note\",\n  \"content\": \"Created from Postman collection\"\n}"
-          }
+          "method": "GET"
         },
         "response": [],
         "event": [
           {
             "listen": "test",
             "script": {
-              "id": "a583b265-fa9c-4f98-8825-aac27800176a",
+              "id": "44a4202c-7811-41e9-9ca8-91729affcdfe",
               "type": "text/javascript",
               "exec": [
-                "pm.test('Notes create returns 201', function () {",
-                "    pm.expect(pm.response.code).to.eql(201);",
-                "});"
-              ],
-              "_lastExecutionId": "fd7a4d3e-c23a-4847-8382-972a8c8de6ce"
-            }
-          }
-        ]
-      },
-      {
-        "id": "3fe6aefe-58b4-43f6-ad90-cb7f52d79c69",
-        "name": "Notes - Delete",
-        "request": {
-          "url": {
-            "path": [
-              "api",
-              "v1",
-              "notes",
-              "{{noteId}}"
-            ],
-            "host": [
-              "{{baseUrl}}"
-            ],
-            "query": [],
-            "variable": []
-          },
-          "method": "DELETE"
-        },
-        "response": [],
-        "event": [
-          {
-            "listen": "test",
-            "script": {
-              "id": "2ec517a1-8178-46c4-8762-16cef061d129",
-              "type": "text/javascript",
-              "exec": [
-                "pm.test('Notes delete returns 200', function () {",
+                "pm.test('Notes list returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "b41a81d9-62a0-4a78-ad08-f9a89ee0be97"
+              "_lastExecutionId": "fa4b0c94-9cca-41c4-a474-d59442e59e65"
             }
           }
         ]
       },
       {
-        "id": "d543d653-a35e-4e62-b2e1-77fe315e40be",
+        "id": "895c74ea-29c5-49c7-9f84-c93c9eadbb81",
         "name": "Tags - List",
         "request": {
           "url": {
@@ -236,6 +189,16 @@
             "query": [],
             "variable": []
           },
+          "header": [
+            {
+              "key": "Accept",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
           "method": "GET"
         },
         "response": [],
@@ -243,20 +206,20 @@
           {
             "listen": "test",
             "script": {
-              "id": "b75b68f6-52c5-4d8b-ae29-39b26a1775ee",
+              "id": "9a704533-b0bb-45a0-925c-ac2cc6d81db5",
               "type": "text/javascript",
               "exec": [
-                "pm.test('Tags list returns 200 in stub mode', function () {",
+                "pm.test('Tags list returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "c3eea376-a686-415b-9e45-d54b3a9bae67"
+              "_lastExecutionId": "4cf00edb-1264-4517-80c9-c68035d8d660"
             }
           }
         ]
       },
       {
-        "id": "9c464ae5-8906-4277-8ba5-32d6474bf8c3",
+        "id": "ecbebad9-ad93-4322-888a-38edcf0e013e",
         "name": "Tags - Create",
         "request": {
           "url": {
@@ -275,6 +238,14 @@
             {
               "key": "Content-Type",
               "value": "application/json"
+            },
+            {
+              "key": "Accept",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
             }
           ],
           "method": "POST",
@@ -288,20 +259,131 @@
           {
             "listen": "test",
             "script": {
-              "id": "5b0c2161-e05c-4b5b-8bdc-78daed39d1f7",
+              "id": "acfb7c2f-208d-4a0c-959b-a3347edd6775",
               "type": "text/javascript",
               "exec": [
-                "pm.test('Tags create returns 201 in stub mode', function () {",
+                "pm.test('Tags create returns 201', function () {",
                 "    pm.expect(pm.response.code).to.eql(201);",
-                "});"
+                "});",
+                "",
+                "let json = {};",
+                "try { json = pm.response.json(); } catch (e) {}",
+                "if (json && json.data && json.data.id) {",
+                "    pm.environment.set('tagId', json.data.id);",
+                "}"
               ],
-              "_lastExecutionId": "95a90a24-69b1-4e57-b62e-5282c2ce89ff"
+              "_lastExecutionId": "9422f772-7e99-4d14-82fa-b0c1636122bd"
             }
           }
         ]
       },
       {
-        "id": "b6934a15-bb34-494b-8502-78198a455990",
+        "id": "07ec5d95-67bc-4e29-b8fc-ae19c453ef15",
+        "name": "Notes - Create",
+        "request": {
+          "url": {
+            "path": [
+              "api",
+              "v1",
+              "notes"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Accept",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"text\": \"Created from Postman collection\",\n  \"tag_id\": {{tagId}}\n}"
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "e3804104-7721-4d67-b997-ae467b118691",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Notes create returns 201', function () {",
+                "    pm.expect(pm.response.code).to.eql(201);",
+                "});",
+                "",
+                "let json = {};",
+                "try { json = pm.response.json(); } catch (e) {}",
+                "if (json && json.data && json.data.id) {",
+                "    pm.environment.set('noteId', json.data.id);",
+                "}"
+              ],
+              "_lastExecutionId": "b6144a83-1ab5-4c89-8612-850d63f93052"
+            }
+          }
+        ]
+      },
+      {
+        "id": "e675c378-aa38-4c17-99ae-9ccb6ba87766",
+        "name": "Notes - Delete",
+        "request": {
+          "url": {
+            "path": [
+              "api",
+              "v1",
+              "notes",
+              "{{noteId}}"
+            ],
+            "host": [
+              "{{baseUrl}}"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Accept",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "method": "DELETE"
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "1adb45b6-902b-4e4c-bdf9-dd975c0b8416",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Notes delete returns 200', function () {",
+                "    pm.expect(pm.response.code).to.eql(200);",
+                "});"
+              ],
+              "_lastExecutionId": "68ef04d3-673b-456d-a350-335fb01181dd"
+            }
+          }
+        ]
+      },
+      {
+        "id": "5777d15a-4293-42a0-b4e1-42d3043ef94b",
         "name": "Auth - Logout",
         "request": {
           "url": {
@@ -316,6 +398,16 @@
             "query": [],
             "variable": []
           },
+          "header": [
+            {
+              "key": "Accept",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
           "method": "POST"
         },
         "response": [],
@@ -323,14 +415,14 @@
           {
             "listen": "test",
             "script": {
-              "id": "af952748-ab90-49d0-8541-e08c76fab410",
+              "id": "55d33563-1811-4cc5-8791-21147f81b1c1",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Logout returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "b4752d16-6587-4d38-bb0c-7811b80e6a99"
+              "_lastExecutionId": "bb77791e-54b2-46a0-bf8d-c1d9d78f6db3"
             }
           }
         ]
@@ -349,7 +441,7 @@
       "name": "API v1 - Step Progression",
       "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
       "description": {
-        "content": "Stub-mode collection for quick validation of all created API v1 endpoints.",
+        "content": "Step 3 collection aligned with Sanctum bearer auth and current API contracts.",
         "type": "text/plain"
       }
     }
@@ -370,18 +462,33 @@
       },
       {
         "type": "any",
-        "value": "",
+        "value": "7|noIgTALoUIXLhJ1cvSPY5L8ByI7xVXaJc3V1rPtja44cde0b",
         "key": "token"
       },
       {
         "type": "any",
-        "value": "1",
+        "value": 4,
         "key": "noteId"
+      },
+      {
+        "type": "any",
+        "value": 5,
+        "key": "tagId"
+      },
+      {
+        "type": "any",
+        "value": "test.user.1776801065189@example.com",
+        "key": "userEmail"
+      },
+      {
+        "type": "any",
+        "value": "password123",
+        "key": "userPassword"
       }
     ]
   },
   "globals": {
-    "id": "4ba14b8e-4965-4146-a142-39be61a5b870",
+    "id": "4adecbaa-3d13-4561-9934-d4f538686fb0",
     "values": []
   },
   "run": {
@@ -397,7 +504,7 @@
         "failed": 0
       },
       "scripts": {
-        "total": 8,
+        "total": 9,
         "pending": 0,
         "failed": 0
       },
@@ -417,7 +524,7 @@
         "failed": 0
       },
       "assertions": {
-        "total": 9,
+        "total": 10,
         "pending": 0,
         "failed": 0
       },
@@ -427,16 +534,16 @@
         "failed": 0
       },
       "prerequestScripts": {
-        "total": 0,
+        "total": 1,
         "pending": 0,
         "failed": 0
       }
     },
     "timings": {
-      "responseAverage": 23.75,
-      "responseMin": 8,
-      "responseMax": 82,
-      "responseSd": 24.96873044429773,
+      "responseAverage": 84,
+      "responseMin": 14,
+      "responseMax": 319,
+      "responseSd": 117.30941991161664,
       "dnsAverage": 0,
       "dnsMin": 0,
       "dnsMax": 0,
@@ -445,8 +552,8 @@
       "firstByteMin": 0,
       "firstByteMax": 0,
       "firstByteSd": 0,
-      "started": 1776789135608,
-      "completed": 1776789135945
+      "started": 1776801065175,
+      "completed": 1776801066025
     },
     "executions": [
       {
@@ -459,11 +566,11 @@
           "eof": false,
           "bof": true,
           "cr": false,
-          "ref": "54c14f41-df2e-4f06-a269-032ef959d728",
-          "httpRequestId": "0bb1ccee-cca3-4dbe-830f-ed23c4426766"
+          "ref": "a7babeb1-4adc-4e6a-ab8c-014aee9c08df",
+          "httpRequestId": "7deb14d4-3514-4fbb-893a-f8bb5ffd9d55"
         },
         "item": {
-          "id": "2f95968c-5cf0-4f1e-bb48-523964d0d438",
+          "id": "0f981820-56ab-4b1a-ba06-1ba6c6e1d415",
           "name": "Auth - Register",
           "request": {
             "url": {
@@ -482,20 +589,36 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
               }
             ],
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\",\n  \"password_confirmation\": \"{{userPassword}}\"\n}"
             }
           },
           "response": [],
           "event": [
             {
+              "listen": "prerequest",
+              "script": {
+                "id": "82aed83b-c851-49a5-92d4-16378a916a97",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set('userEmail', `test.user.${Date.now()}@example.com`);",
+                  "pm.environment.set('userPassword', 'password123');"
+                ],
+                "_lastExecutionId": "1e28e2c9-4cf1-4a8f-b46a-d192405644fa"
+              }
+            },
+            {
               "listen": "test",
               "script": {
-                "id": "796a3274-838b-4a98-bb16-f1be52000846",
+                "id": "342daacc-8a4e-442b-bf51-e3800e6625f5",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Register returns 200/201', function () {",
@@ -506,7 +629,7 @@
                   "    pm.response.to.be.json;",
                   "});"
                 ],
-                "_lastExecutionId": "fbc24601-8df5-4a61-94b9-637e33fa3855"
+                "_lastExecutionId": "9f2cc85f-d6b3-473b-a13e-16b416e1cf95"
               }
             }
           ]
@@ -535,13 +658,12 @@
               "value": "application/json"
             },
             {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
+              "key": "Accept",
+              "value": "application/json"
             },
             {
-              "key": "Accept",
-              "value": "*/*",
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
               "system": true
             },
             {
@@ -551,7 +673,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "c2ce4077-54da-4f8b-945d-a3299bf58134",
+              "value": "2161a5c9-cfb1-4c6a-be1d-382cb05bf8f0",
               "system": true
             },
             {
@@ -571,18 +693,18 @@
             },
             {
               "key": "Content-Length",
-              "value": "132",
+              "value": "146",
               "system": true
             }
           ],
           "method": "POST",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user.1776801065189@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
           }
         },
         "response": {
-          "id": "82c9f713-736f-4e85-b8cb-9f2b7d8cb0f0",
+          "id": "416d3e44-feb3-48a4-af5b-0988f0caf0a2",
           "status": "Created",
           "code": 201,
           "header": [
@@ -604,7 +726,7 @@
             },
             {
               "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
+              "value": "Tue, 21 Apr 2026 19:51:05 GMT"
             },
             {
               "key": "Content-Type",
@@ -649,7 +771,12 @@
               34,
               58,
               34,
-              82,
+              85,
+              115,
+              101,
+              114,
+              32,
+              114,
               101,
               103,
               105,
@@ -657,16 +784,20 @@
               116,
               101,
               114,
+              101,
+              100,
               32,
               115,
-              116,
               117,
-              98,
-              32,
-              114,
+              99,
+              99,
               101,
-              97,
-              100,
+              115,
+              115,
+              102,
+              117,
+              108,
+              108,
               121,
               46,
               34,
@@ -724,6 +855,20 @@
               115,
               101,
               114,
+              46,
+              49,
+              55,
+              55,
+              54,
+              56,
+              48,
+              49,
+              48,
+              54,
+              53,
+              49,
+              56,
+              57,
               64,
               101,
               120,
@@ -747,19 +892,67 @@
               110,
               34,
               58,
-              110,
+              34,
+              54,
+              124,
+              52,
+              118,
+              116,
+              80,
+              75,
+              98,
+              52,
+              83,
+              86,
+              115,
+              86,
+              79,
+              76,
+              113,
+              49,
+              90,
+              79,
+              74,
+              69,
+              66,
+              73,
+              122,
+              121,
+              99,
+              53,
+              101,
+              85,
+              85,
+              51,
+              119,
+              49,
               117,
-              108,
-              108,
+              86,
+              112,
+              56,
+              66,
+              110,
+              121,
+              83,
+              54,
+              55,
+              97,
+              98,
+              101,
+              97,
+              102,
+              52,
+              53,
+              34,
               125,
               125
             ]
           },
           "cookie": [],
-          "responseTime": 82,
-          "responseSize": 135
+          "responseTime": 319,
+          "responseSize": 206
         },
-        "id": "2f95968c-5cf0-4f1e-bb48-523964d0d438",
+        "id": "0f981820-56ab-4b1a-ba06-1ba6c6e1d415",
         "assertions": [
           {
             "assertion": "Register returns 200/201",
@@ -773,15 +966,15 @@
       },
       {
         "cursor": {
-          "ref": "ef5bbb70-175a-4721-8175-1bbd59000fa0",
+          "ref": "caf671a9-e59c-4c9d-bad2-ba0928cfb6de",
           "length": 8,
           "cycles": 1,
           "position": 1,
           "iteration": 0,
-          "httpRequestId": "a067b7ed-bb51-4a49-911c-582a62759224"
+          "httpRequestId": "596a5137-48b6-479f-8db4-30902b222cef"
         },
         "item": {
-          "id": "9ef108aa-24aa-4d15-8474-c25802402b5b",
+          "id": "30d73084-1e5c-446d-9c71-0045aaf1b778",
           "name": "Auth - Login",
           "request": {
             "url": {
@@ -800,12 +993,16 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
               }
             ],
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\"\n}"
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}"
             }
           },
           "response": [],
@@ -813,7 +1010,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "e0effc5c-7fdd-484b-85b3-73362a7f8e05",
+                "id": "310ab9ed-6acd-4928-8183-f0d48517f190",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', function () {",
@@ -824,9 +1021,13 @@
                   "try { json = pm.response.json(); } catch (e) {}",
                   "if (json && json.data && json.data.token) {",
                   "    pm.environment.set('token', json.data.token);",
-                  "}"
+                  "}",
+                  "",
+                  "pm.test('Token is returned', function () {",
+                  "    pm.expect(pm.environment.get('token')).to.be.a('string').and.not.empty;",
+                  "});"
                 ],
-                "_lastExecutionId": "0590b1d4-ec17-4c24-a3eb-e4f5a6c0de4b"
+                "_lastExecutionId": "34eac8d3-a511-4bc2-a850-c9617a205078"
               }
             }
           ]
@@ -855,13 +1056,12 @@
               "value": "application/json"
             },
             {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
+              "key": "Accept",
+              "value": "application/json"
             },
             {
-              "key": "Accept",
-              "value": "*/*",
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
               "system": true
             },
             {
@@ -871,7 +1071,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "89cac040-df00-4dee-90ca-dcbb4745c9d3",
+              "value": "39ca7f7b-296d-4f6d-95c6-ac3b1e39645e",
               "system": true
             },
             {
@@ -891,18 +1091,18 @@
             },
             {
               "key": "Content-Length",
-              "value": "67",
+              "value": "81",
               "system": true
             }
           ],
           "method": "POST",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"email\": \"test.user@example.com\",\n  \"password\": \"password123\"\n}"
+            "raw": "{\n  \"email\": \"test.user.1776801065189@example.com\",\n  \"password\": \"password123\"\n}"
           }
         },
         "response": {
-          "id": "e6db3ddb-afb4-48ff-a77d-7cd3c431653c",
+          "id": "a4c5ec74-cd93-4238-8f7e-3ae2db1efab1",
           "status": "OK",
           "code": 200,
           "header": [
@@ -924,7 +1124,7 @@
             },
             {
               "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
+              "value": "Tue, 21 Apr 2026 19:51:05 GMT"
             },
             {
               "key": "Content-Type",
@@ -976,15 +1176,15 @@
               110,
               32,
               115,
-              116,
               117,
-              98,
-              32,
-              114,
+              99,
+              99,
               101,
-              97,
-              100,
-              121,
+              115,
+              115,
+              102,
+              117,
+              108,
               46,
               34,
               44,
@@ -996,6 +1196,33 @@
               34,
               58,
               123,
+              34,
+              117,
+              115,
+              101,
+              114,
+              34,
+              58,
+              123,
+              34,
+              110,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              84,
+              101,
+              115,
+              116,
+              32,
+              85,
+              115,
+              101,
+              114,
+              34,
+              44,
               34,
               101,
               109,
@@ -1014,6 +1241,20 @@
               115,
               101,
               114,
+              46,
+              49,
+              55,
+              55,
+              54,
+              56,
+              48,
+              49,
+              48,
+              54,
+              53,
+              49,
+              56,
+              57,
               64,
               101,
               120,
@@ -1027,6 +1268,7 @@
               111,
               109,
               34,
+              125,
               44,
               34,
               116,
@@ -1036,37 +1278,89 @@
               110,
               34,
               58,
+              34,
+              55,
+              124,
               110,
-              117,
-              108,
-              108,
+              111,
+              73,
+              103,
+              84,
+              65,
+              76,
+              111,
+              85,
+              73,
+              88,
+              76,
+              104,
+              74,
+              49,
+              99,
+              118,
+              83,
+              80,
+              89,
+              53,
+              76,
+              56,
+              66,
+              121,
+              73,
+              55,
+              120,
+              86,
+              88,
+              97,
+              74,
+              99,
+              51,
+              86,
+              49,
+              114,
+              80,
+              116,
+              106,
+              97,
+              52,
+              52,
+              99,
+              100,
+              101,
+              48,
+              98,
+              34,
               125,
               125
             ]
           },
           "cookie": [],
-          "responseTime": 13,
-          "responseSize": 104
+          "responseTime": 251,
+          "responseSize": 194
         },
-        "id": "9ef108aa-24aa-4d15-8474-c25802402b5b",
+        "id": "30d73084-1e5c-446d-9c71-0045aaf1b778",
         "assertions": [
           {
             "assertion": "Login returns 200",
+            "skipped": false
+          },
+          {
+            "assertion": "Token is returned",
             "skipped": false
           }
         ]
       },
       {
         "cursor": {
-          "ref": "c1fea680-944d-4643-bcf0-da45c26e0e41",
+          "ref": "e61c99e5-842d-4c10-a15f-e1691cb98f61",
           "length": 8,
           "cycles": 1,
           "position": 2,
           "iteration": 0,
-          "httpRequestId": "f9f4874a-4b87-459c-9bc3-99196dd550c1"
+          "httpRequestId": "660ad816-13cb-422f-9420-335a733591af"
         },
         "item": {
-          "id": "aaafa61e-f2c2-4a8c-ab4a-8d4bb82423b1",
+          "id": "3bd89fc7-1142-46dc-89c1-2580a1e3198c",
           "name": "Notes - List",
           "request": {
             "url": {
@@ -1081,6 +1375,16 @@
               "query": [],
               "variable": []
             },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "method": "GET"
           },
           "response": [],
@@ -1088,14 +1392,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "45021cb0-ae5b-4c01-8879-b2ca9a9dec0c",
+                "id": "44a4202c-7811-41e9-9ca8-91729affcdfe",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Notes list returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "376f24fc-de42-46ab-b965-d468f8f3eee0"
+                "_lastExecutionId": "fa4b0c94-9cca-41c4-a474-d59442e59e65"
               }
             }
           ]
@@ -1120,13 +1424,16 @@
           },
           "header": [
             {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
+              "key": "Accept",
+              "value": "application/json"
             },
             {
-              "key": "Accept",
-              "value": "*/*",
+              "key": "Authorization",
+              "value": "Bearer 7|noIgTALoUIXLhJ1cvSPY5L8ByI7xVXaJc3V1rPtja44cde0b"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
               "system": true
             },
             {
@@ -1136,7 +1443,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "7ce04fd6-565f-4e83-bdc7-b9d043538c1a",
+              "value": "d5ce0735-f64b-4701-a119-f8ef2fffec65",
               "system": true
             },
             {
@@ -1158,7 +1465,7 @@
           "method": "GET"
         },
         "response": {
-          "id": "9290dd79-bc5e-4990-80a7-3a375cfa2fb1",
+          "id": "28fa4620-4e2a-4000-8c6c-d3c58ee18ab5",
           "status": "OK",
           "code": 200,
           "header": [
@@ -1180,7 +1487,7 @@
             },
             {
               "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
+              "value": "Tue, 21 Apr 2026 19:51:05 GMT"
             },
             {
               "key": "Content-Type",
@@ -1231,20 +1538,25 @@
               101,
               115,
               32,
-              108,
-              105,
-              115,
-              116,
-              32,
-              115,
-              116,
-              117,
-              98,
-              32,
-              114,
+              102,
               101,
-              97,
+              116,
+              99,
+              104,
+              101,
               100,
+              32,
+              115,
+              117,
+              99,
+              99,
+              101,
+              115,
+              115,
+              102,
+              117,
+              108,
+              108,
               121,
               46,
               34,
@@ -1262,10 +1574,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 9,
-          "responseSize": 65
+          "responseTime": 20,
+          "responseSize": 70
         },
-        "id": "aaafa61e-f2c2-4a8c-ab4a-8d4bb82423b1",
+        "id": "3bd89fc7-1142-46dc-89c1-2580a1e3198c",
         "assertions": [
           {
             "assertion": "Notes list returns 200",
@@ -1275,551 +1587,15 @@
       },
       {
         "cursor": {
-          "ref": "7973f308-93a7-46ce-a544-365451bdbd62",
+          "ref": "8897dd28-583b-4026-b1c0-82e1b0f4c403",
           "length": 8,
           "cycles": 1,
           "position": 3,
           "iteration": 0,
-          "httpRequestId": "065dd4f3-8ec6-40d8-a788-80144ece0d0a"
+          "httpRequestId": "6c3ae265-618c-4e46-88f7-63bf4807be2f"
         },
         "item": {
-          "id": "7993d988-f12d-4c20-a7c7-8d905ab308c3",
-          "name": "Notes - Create",
-          "request": {
-            "url": {
-              "path": [
-                "api",
-                "v1",
-                "notes"
-              ],
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "method": "POST",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Quick test note\",\n  \"content\": \"Created from Postman collection\"\n}"
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "id": "a583b265-fa9c-4f98-8825-aac27800176a",
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Notes create returns 201', function () {",
-                  "    pm.expect(pm.response.code).to.eql(201);",
-                  "});"
-                ],
-                "_lastExecutionId": "fd7a4d3e-c23a-4847-8382-972a8c8de6ce"
-              }
-            }
-          ]
-        },
-        "request": {
-          "url": {
-            "protocol": "http",
-            "port": "8000",
-            "path": [
-              "api",
-              "v1",
-              "notes"
-            ],
-            "host": [
-              "127",
-              "0",
-              "0",
-              "1"
-            ],
-            "query": [],
-            "variable": []
-          },
-          "header": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
-            },
-            {
-              "key": "Accept",
-              "value": "*/*",
-              "system": true
-            },
-            {
-              "key": "Cache-Control",
-              "value": "no-cache",
-              "system": true
-            },
-            {
-              "key": "Postman-Token",
-              "value": "d47666b3-0f6e-41f1-8342-656a45b871da",
-              "system": true
-            },
-            {
-              "key": "Host",
-              "value": "127.0.0.1:8000",
-              "system": true
-            },
-            {
-              "key": "Accept-Encoding",
-              "value": "gzip, deflate, br",
-              "system": true
-            },
-            {
-              "key": "Connection",
-              "value": "keep-alive",
-              "system": true
-            },
-            {
-              "key": "Content-Length",
-              "value": "80",
-              "system": true
-            }
-          ],
-          "method": "POST",
-          "body": {
-            "mode": "raw",
-            "raw": "{\n  \"title\": \"Quick test note\",\n  \"content\": \"Created from Postman collection\"\n}"
-          }
-        },
-        "response": {
-          "id": "9fa3590b-54ca-44be-8824-5892fbf8d95d",
-          "status": "Created",
-          "code": 201,
-          "header": [
-            {
-              "key": "Host",
-              "value": "127.0.0.1:8000"
-            },
-            {
-              "key": "Connection",
-              "value": "close"
-            },
-            {
-              "key": "X-Powered-By",
-              "value": "PHP/8.2.30"
-            },
-            {
-              "key": "Cache-Control",
-              "value": "no-cache, private"
-            },
-            {
-              "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
-            },
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "key": "Access-Control-Allow-Origin",
-              "value": "*"
-            }
-          ],
-          "stream": {
-            "type": "Buffer",
-            "data": [
-              123,
-              34,
-              115,
-              116,
-              97,
-              116,
-              117,
-              115,
-              34,
-              58,
-              34,
-              115,
-              117,
-              99,
-              99,
-              101,
-              115,
-              115,
-              34,
-              44,
-              34,
-              109,
-              101,
-              115,
-              115,
-              97,
-              103,
-              101,
-              34,
-              58,
-              34,
-              78,
-              111,
-              116,
-              101,
-              32,
-              99,
-              114,
-              101,
-              97,
-              116,
-              105,
-              111,
-              110,
-              32,
-              115,
-              116,
-              117,
-              98,
-              32,
-              114,
-              101,
-              97,
-              100,
-              121,
-              46,
-              34,
-              44,
-              34,
-              100,
-              97,
-              116,
-              97,
-              34,
-              58,
-              123,
-              34,
-              116,
-              105,
-              116,
-              108,
-              101,
-              34,
-              58,
-              34,
-              81,
-              117,
-              105,
-              99,
-              107,
-              32,
-              116,
-              101,
-              115,
-              116,
-              32,
-              110,
-              111,
-              116,
-              101,
-              34,
-              44,
-              34,
-              99,
-              111,
-              110,
-              116,
-              101,
-              110,
-              116,
-              34,
-              58,
-              34,
-              67,
-              114,
-              101,
-              97,
-              116,
-              101,
-              100,
-              32,
-              102,
-              114,
-              111,
-              109,
-              32,
-              80,
-              111,
-              115,
-              116,
-              109,
-              97,
-              110,
-              32,
-              99,
-              111,
-              108,
-              108,
-              101,
-              99,
-              116,
-              105,
-              111,
-              110,
-              34,
-              125,
-              125
-            ]
-          },
-          "cookie": [],
-          "responseTime": 12,
-          "responseSize": 137
-        },
-        "id": "7993d988-f12d-4c20-a7c7-8d905ab308c3",
-        "assertions": [
-          {
-            "assertion": "Notes create returns 201",
-            "skipped": false
-          }
-        ]
-      },
-      {
-        "cursor": {
-          "ref": "b805c291-781b-43a6-a289-7616c82a69fb",
-          "length": 8,
-          "cycles": 1,
-          "position": 4,
-          "iteration": 0,
-          "httpRequestId": "46802e86-3167-4122-91aa-d0da2e31d2e6"
-        },
-        "item": {
-          "id": "3fe6aefe-58b4-43f6-ad90-cb7f52d79c69",
-          "name": "Notes - Delete",
-          "request": {
-            "url": {
-              "path": [
-                "api",
-                "v1",
-                "notes",
-                "{{noteId}}"
-              ],
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "method": "DELETE"
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "id": "2ec517a1-8178-46c4-8762-16cef061d129",
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Notes delete returns 200', function () {",
-                  "    pm.expect(pm.response.code).to.eql(200);",
-                  "});"
-                ],
-                "_lastExecutionId": "b41a81d9-62a0-4a78-ad08-f9a89ee0be97"
-              }
-            }
-          ]
-        },
-        "request": {
-          "url": {
-            "protocol": "http",
-            "port": "8000",
-            "path": [
-              "api",
-              "v1",
-              "notes",
-              "1"
-            ],
-            "host": [
-              "127",
-              "0",
-              "0",
-              "1"
-            ],
-            "query": [],
-            "variable": []
-          },
-          "header": [
-            {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
-            },
-            {
-              "key": "Accept",
-              "value": "*/*",
-              "system": true
-            },
-            {
-              "key": "Cache-Control",
-              "value": "no-cache",
-              "system": true
-            },
-            {
-              "key": "Postman-Token",
-              "value": "4978344f-07e7-4aca-ac4b-8b655b64d4d8",
-              "system": true
-            },
-            {
-              "key": "Host",
-              "value": "127.0.0.1:8000",
-              "system": true
-            },
-            {
-              "key": "Accept-Encoding",
-              "value": "gzip, deflate, br",
-              "system": true
-            },
-            {
-              "key": "Connection",
-              "value": "keep-alive",
-              "system": true
-            }
-          ],
-          "method": "DELETE"
-        },
-        "response": {
-          "id": "fde77f42-9556-4f3f-9bd4-d103569339ba",
-          "status": "OK",
-          "code": 200,
-          "header": [
-            {
-              "key": "Host",
-              "value": "127.0.0.1:8000"
-            },
-            {
-              "key": "Connection",
-              "value": "close"
-            },
-            {
-              "key": "X-Powered-By",
-              "value": "PHP/8.2.30"
-            },
-            {
-              "key": "Cache-Control",
-              "value": "no-cache, private"
-            },
-            {
-              "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
-            },
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "key": "Access-Control-Allow-Origin",
-              "value": "*"
-            }
-          ],
-          "stream": {
-            "type": "Buffer",
-            "data": [
-              123,
-              34,
-              115,
-              116,
-              97,
-              116,
-              117,
-              115,
-              34,
-              58,
-              34,
-              115,
-              117,
-              99,
-              99,
-              101,
-              115,
-              115,
-              34,
-              44,
-              34,
-              109,
-              101,
-              115,
-              115,
-              97,
-              103,
-              101,
-              34,
-              58,
-              34,
-              78,
-              111,
-              116,
-              101,
-              32,
-              100,
-              101,
-              108,
-              101,
-              116,
-              105,
-              111,
-              110,
-              32,
-              115,
-              116,
-              117,
-              98,
-              32,
-              114,
-              101,
-              97,
-              100,
-              121,
-              46,
-              34,
-              44,
-              34,
-              100,
-              97,
-              116,
-              97,
-              34,
-              58,
-              110,
-              117,
-              108,
-              108,
-              125
-            ]
-          },
-          "cookie": [],
-          "responseTime": 8,
-          "responseSize": 70
-        },
-        "id": "3fe6aefe-58b4-43f6-ad90-cb7f52d79c69",
-        "assertions": [
-          {
-            "assertion": "Notes delete returns 200",
-            "skipped": false
-          }
-        ]
-      },
-      {
-        "cursor": {
-          "ref": "ff44ce40-aac3-4920-8cbf-80ab27caf29b",
-          "length": 8,
-          "cycles": 1,
-          "position": 5,
-          "iteration": 0,
-          "httpRequestId": "c15dbf33-c240-452f-91e0-e2a04bd1d36a"
-        },
-        "item": {
-          "id": "d543d653-a35e-4e62-b2e1-77fe315e40be",
+          "id": "895c74ea-29c5-49c7-9f84-c93c9eadbb81",
           "name": "Tags - List",
           "request": {
             "url": {
@@ -1834,6 +1610,16 @@
               "query": [],
               "variable": []
             },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "method": "GET"
           },
           "response": [],
@@ -1841,14 +1627,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "b75b68f6-52c5-4d8b-ae29-39b26a1775ee",
+                "id": "9a704533-b0bb-45a0-925c-ac2cc6d81db5",
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Tags list returns 200 in stub mode', function () {",
+                  "pm.test('Tags list returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "c3eea376-a686-415b-9e45-d54b3a9bae67"
+                "_lastExecutionId": "4cf00edb-1264-4517-80c9-c68035d8d660"
               }
             }
           ]
@@ -1873,13 +1659,16 @@
           },
           "header": [
             {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
+              "key": "Accept",
+              "value": "application/json"
             },
             {
-              "key": "Accept",
-              "value": "*/*",
+              "key": "Authorization",
+              "value": "Bearer 7|noIgTALoUIXLhJ1cvSPY5L8ByI7xVXaJc3V1rPtja44cde0b"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
               "system": true
             },
             {
@@ -1889,7 +1678,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "9dd1847a-22b7-4f13-99c7-d741cff0d056",
+              "value": "f47e10ed-4945-433c-b6d8-4ea6ede6832e",
               "system": true
             },
             {
@@ -1911,7 +1700,7 @@
           "method": "GET"
         },
         "response": {
-          "id": "585b1538-f2ab-4e63-ac75-4972facfd80b",
+          "id": "868f478c-da81-428a-9b40-955ea6806028",
           "status": "OK",
           "code": 200,
           "header": [
@@ -1933,7 +1722,7 @@
             },
             {
               "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
+              "value": "Tue, 21 Apr 2026 19:51:05 GMT"
             },
             {
               "key": "Content-Type",
@@ -2019,28 +1808,28 @@
             ]
           },
           "cookie": [],
-          "responseTime": 9,
+          "responseTime": 15,
           "responseSize": 69
         },
-        "id": "d543d653-a35e-4e62-b2e1-77fe315e40be",
+        "id": "895c74ea-29c5-49c7-9f84-c93c9eadbb81",
         "assertions": [
           {
-            "assertion": "Tags list returns 200 in stub mode",
+            "assertion": "Tags list returns 200",
             "skipped": false
           }
         ]
       },
       {
         "cursor": {
-          "ref": "78bfffa2-766a-4bac-a2ee-478acdce7805",
+          "ref": "d32afa76-de45-4b2c-95f9-225e934e235c",
           "length": 8,
           "cycles": 1,
-          "position": 6,
+          "position": 4,
           "iteration": 0,
-          "httpRequestId": "defc974e-771d-4515-8737-a50171f41303"
+          "httpRequestId": "0fb874e0-c3ca-423f-b3d0-a13e192471b5"
         },
         "item": {
-          "id": "9c464ae5-8906-4277-8ba5-32d6474bf8c3",
+          "id": "ecbebad9-ad93-4322-888a-38edcf0e013e",
           "name": "Tags - Create",
           "request": {
             "url": {
@@ -2059,6 +1848,14 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
             ],
             "method": "POST",
@@ -2072,14 +1869,20 @@
             {
               "listen": "test",
               "script": {
-                "id": "5b0c2161-e05c-4b5b-8bdc-78daed39d1f7",
+                "id": "acfb7c2f-208d-4a0c-959b-a3347edd6775",
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('Tags create returns 201 in stub mode', function () {",
+                  "pm.test('Tags create returns 201', function () {",
                   "    pm.expect(pm.response.code).to.eql(201);",
-                  "});"
+                  "});",
+                  "",
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (e) {}",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.environment.set('tagId', json.data.id);",
+                  "}"
                 ],
-                "_lastExecutionId": "95a90a24-69b1-4e57-b62e-5282c2ce89ff"
+                "_lastExecutionId": "9422f772-7e99-4d14-82fa-b0c1636122bd"
               }
             }
           ]
@@ -2108,13 +1911,16 @@
               "value": "application/json"
             },
             {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
+              "key": "Accept",
+              "value": "application/json"
             },
             {
-              "key": "Accept",
-              "value": "*/*",
+              "key": "Authorization",
+              "value": "Bearer 7|noIgTALoUIXLhJ1cvSPY5L8ByI7xVXaJc3V1rPtja44cde0b"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
               "system": true
             },
             {
@@ -2124,7 +1930,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "93f8a810-7cfa-4875-b1bc-cac5d53f3416",
+              "value": "b82e6b50-8bc1-41d7-8d82-1e43f0ef3f01",
               "system": true
             },
             {
@@ -2155,7 +1961,7 @@
           }
         },
         "response": {
-          "id": "cbd453d0-032b-475f-a764-0f1d8c16bd27",
+          "id": "27f37dea-a7d7-48bd-8f08-cabb3cdfde2a",
           "status": "Created",
           "code": 201,
           "header": [
@@ -2177,7 +1983,7 @@
             },
             {
               "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
+              "value": "Tue, 21 Apr 2026 19:51:05 GMT"
             },
             {
               "key": "Content-Type",
@@ -2256,34 +2062,685 @@
               97,
               34,
               58,
-              91,
-              93,
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              53,
+              44,
+              34,
+              110,
+              97,
+              109,
+              101,
+              34,
+              58,
+              34,
+              112,
+              111,
+              115,
+              116,
+              109,
+              97,
+              110,
+              45,
+              116,
+              97,
+              103,
+              34,
+              44,
+              34,
+              117,
+              115,
+              101,
+              114,
+              95,
+              105,
+              100,
+              34,
+              58,
+              52,
+              125,
               125
             ]
           },
           "cookie": [],
-          "responseTime": 46,
-          "responseSize": 68
+          "responseTime": 14,
+          "responseSize": 107
         },
-        "id": "9c464ae5-8906-4277-8ba5-32d6474bf8c3",
+        "id": "ecbebad9-ad93-4322-888a-38edcf0e013e",
         "assertions": [
           {
-            "assertion": "Tags create returns 201 in stub mode",
+            "assertion": "Tags create returns 201",
             "skipped": false
           }
         ]
       },
       {
         "cursor": {
-          "ref": "23e864ee-1f74-4155-bd18-b631ee27e1c8",
+          "ref": "cd736c6d-22ba-41df-910b-a5ed0f1a32e6",
+          "length": 8,
+          "cycles": 1,
+          "position": 5,
+          "iteration": 0,
+          "httpRequestId": "88399c67-1ab5-483c-895c-41c4f4ee6990"
+        },
+        "item": {
+          "id": "07ec5d95-67bc-4e29-b8fc-ae19c453ef15",
+          "name": "Notes - Create",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "notes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Created from Postman collection\",\n  \"tag_id\": {{tagId}}\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "e3804104-7721-4d67-b997-ae467b118691",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Notes create returns 201', function () {",
+                  "    pm.expect(pm.response.code).to.eql(201);",
+                  "});",
+                  "",
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (e) {}",
+                  "if (json && json.data && json.data.id) {",
+                  "    pm.environment.set('noteId', json.data.id);",
+                  "}"
+                ],
+                "_lastExecutionId": "b6144a83-1ab5-4c89-8612-850d63f93052"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "api",
+              "v1",
+              "notes"
+            ],
+            "host": [
+              "127",
+              "0",
+              "0",
+              "1"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Accept",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer 7|noIgTALoUIXLhJ1cvSPY5L8ByI7xVXaJc3V1rPtja44cde0b"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "2d0d2cdb-908b-4492-b341-be69f00d5d23",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "127.0.0.1:8000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "62",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"text\": \"Created from Postman collection\",\n  \"tag_id\": 5\n}"
+          }
+        },
+        "response": {
+          "id": "898a4a57-81dc-4635-a536-43d6ba717708",
+          "status": "Created",
+          "code": 201,
+          "header": [
+            {
+              "key": "Host",
+              "value": "127.0.0.1:8000"
+            },
+            {
+              "key": "Connection",
+              "value": "close"
+            },
+            {
+              "key": "X-Powered-By",
+              "value": "PHP/8.2.30"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, private"
+            },
+            {
+              "key": "Date",
+              "value": "Tue, 21 Apr 2026 19:51:05 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              115,
+              116,
+              97,
+              116,
+              117,
+              115,
+              34,
+              58,
+              34,
+              115,
+              117,
+              99,
+              99,
+              101,
+              115,
+              115,
+              34,
+              44,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              78,
+              111,
+              116,
+              101,
+              32,
+              99,
+              114,
+              101,
+              97,
+              116,
+              101,
+              100,
+              32,
+              115,
+              117,
+              99,
+              99,
+              101,
+              115,
+              115,
+              102,
+              117,
+              108,
+              108,
+              121,
+              46,
+              34,
+              44,
+              34,
+              100,
+              97,
+              116,
+              97,
+              34,
+              58,
+              123,
+              34,
+              105,
+              100,
+              34,
+              58,
+              52,
+              44,
+              34,
+              117,
+              115,
+              101,
+              114,
+              95,
+              105,
+              100,
+              34,
+              58,
+              52,
+              44,
+              34,
+              116,
+              97,
+              103,
+              95,
+              105,
+              100,
+              34,
+              58,
+              53,
+              44,
+              34,
+              116,
+              101,
+              120,
+              116,
+              34,
+              58,
+              34,
+              67,
+              114,
+              101,
+              97,
+              116,
+              101,
+              100,
+              32,
+              102,
+              114,
+              111,
+              109,
+              32,
+              80,
+              111,
+              115,
+              116,
+              109,
+              97,
+              110,
+              32,
+              99,
+              111,
+              108,
+              108,
+              101,
+              99,
+              116,
+              105,
+              111,
+              110,
+              34,
+              44,
+              34,
+              99,
+              114,
+              101,
+              97,
+              116,
+              101,
+              100,
+              95,
+              97,
+              116,
+              34,
+              58,
+              34,
+              50,
+              48,
+              50,
+              54,
+              45,
+              48,
+              52,
+              45,
+              50,
+              49,
+              84,
+              49,
+              57,
+              58,
+              53,
+              49,
+              58,
+              48,
+              53,
+              46,
+              48,
+              48,
+              48,
+              48,
+              48,
+              48,
+              90,
+              34,
+              125,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 14,
+          "responseSize": 182
+        },
+        "id": "07ec5d95-67bc-4e29-b8fc-ae19c453ef15",
+        "assertions": [
+          {
+            "assertion": "Notes create returns 201",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "480437a6-7a7b-4626-9f98-496e38447439",
+          "length": 8,
+          "cycles": 1,
+          "position": 6,
+          "iteration": 0,
+          "httpRequestId": "a4102f48-1c64-4afd-a6a5-84f6c969c27b"
+        },
+        "item": {
+          "id": "e675c378-aa38-4c17-99ae-9ccb6ba87766",
+          "name": "Notes - Delete",
+          "request": {
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "notes",
+                "{{noteId}}"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "method": "DELETE"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "1adb45b6-902b-4e4c-bdf9-dd975c0b8416",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Notes delete returns 200', function () {",
+                  "    pm.expect(pm.response.code).to.eql(200);",
+                  "});"
+                ],
+                "_lastExecutionId": "68ef04d3-673b-456d-a350-335fb01181dd"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "api",
+              "v1",
+              "notes",
+              "4"
+            ],
+            "host": [
+              "127",
+              "0",
+              "0",
+              "1"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Accept",
+              "value": "application/json"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer 7|noIgTALoUIXLhJ1cvSPY5L8ByI7xVXaJc3V1rPtja44cde0b"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "ad7a32d1-23cc-40c6-8806-6b0fc922063e",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "127.0.0.1:8000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "DELETE"
+        },
+        "response": {
+          "id": "764267f3-30b1-40e4-8bf3-1e84bcf32a82",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Host",
+              "value": "127.0.0.1:8000"
+            },
+            {
+              "key": "Connection",
+              "value": "close"
+            },
+            {
+              "key": "X-Powered-By",
+              "value": "PHP/8.2.30"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, private"
+            },
+            {
+              "key": "Date",
+              "value": "Tue, 21 Apr 2026 19:51:05 GMT"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              115,
+              116,
+              97,
+              116,
+              117,
+              115,
+              34,
+              58,
+              34,
+              115,
+              117,
+              99,
+              99,
+              101,
+              115,
+              115,
+              34,
+              44,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              78,
+              111,
+              116,
+              101,
+              32,
+              100,
+              101,
+              108,
+              101,
+              116,
+              101,
+              100,
+              32,
+              115,
+              117,
+              99,
+              99,
+              101,
+              115,
+              115,
+              102,
+              117,
+              108,
+              108,
+              121,
+              46,
+              34,
+              44,
+              34,
+              100,
+              97,
+              116,
+              97,
+              34,
+              58,
+              110,
+              117,
+              108,
+              108,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 19,
+          "responseSize": 71
+        },
+        "id": "e675c378-aa38-4c17-99ae-9ccb6ba87766",
+        "assertions": [
+          {
+            "assertion": "Notes delete returns 200",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "f98f4f18-0b72-4bcf-b177-1933d1bfa514",
           "length": 8,
           "cycles": 1,
           "position": 7,
           "iteration": 0,
-          "httpRequestId": "322e4b3c-ce64-46d5-9da1-13282397acd8"
+          "httpRequestId": "e08e0b20-b392-4589-b6f4-dca5c5130dae"
         },
         "item": {
-          "id": "b6934a15-bb34-494b-8502-78198a455990",
+          "id": "5777d15a-4293-42a0-b4e1-42d3043ef94b",
           "name": "Auth - Logout",
           "request": {
             "url": {
@@ -2298,6 +2755,16 @@
               "query": [],
               "variable": []
             },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "method": "POST"
           },
           "response": [],
@@ -2305,14 +2772,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "af952748-ab90-49d0-8541-e08c76fab410",
+                "id": "55d33563-1811-4cc5-8791-21147f81b1c1",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Logout returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "b4752d16-6587-4d38-bb0c-7811b80e6a99"
+                "_lastExecutionId": "bb77791e-54b2-46a0-bf8d-c1d9d78f6db3"
               }
             }
           ]
@@ -2337,13 +2804,16 @@
           },
           "header": [
             {
-              "key": "User-Agent",
-              "value": "PostmanRuntime/7.39.1",
-              "system": true
+              "key": "Accept",
+              "value": "application/json"
             },
             {
-              "key": "Accept",
-              "value": "*/*",
+              "key": "Authorization",
+              "value": "Bearer 7|noIgTALoUIXLhJ1cvSPY5L8ByI7xVXaJc3V1rPtja44cde0b"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
               "system": true
             },
             {
@@ -2353,7 +2823,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "ad906b75-7cb6-430d-9b73-c67bdf6db207",
+              "value": "0ee82976-84ab-442f-a8e1-77060f08c773",
               "system": true
             },
             {
@@ -2380,7 +2850,7 @@
           "method": "POST"
         },
         "response": {
-          "id": "7d8f285f-1c97-4f12-a9ef-43557fcae011",
+          "id": "44e42f19-ca26-49ac-bb65-b26fd3bd9c39",
           "status": "OK",
           "code": 200,
           "header": [
@@ -2402,7 +2872,7 @@
             },
             {
               "key": "Date",
-              "value": "Tue, 21 Apr 2026 16:32:15 GMT"
+              "value": "Tue, 21 Apr 2026 19:51:06 GMT"
             },
             {
               "key": "Content-Type",
@@ -2455,15 +2925,15 @@
               116,
               32,
               115,
-              116,
               117,
-              98,
-              32,
-              114,
+              99,
+              99,
               101,
-              97,
-              100,
-              121,
+              115,
+              115,
+              102,
+              117,
+              108,
               46,
               34,
               44,
@@ -2482,10 +2952,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 11,
+          "responseTime": 20,
           "responseSize": 63
         },
-        "id": "b6934a15-bb34-494b-8502-78198a455990",
+        "id": "5777d15a-4293-42a0-b4e1-42d3043ef94b",
         "assertions": [
           {
             "assertion": "Logout returns 200",
@@ -2495,7 +2965,7 @@
       }
     ],
     "transfers": {
-      "responseTotal": 711
+      "responseTotal": 962
     },
     "failures": [],
     "error": null

@@ -21,11 +21,11 @@ newman run postman/API-v1.postman_collection.json \
 ## Files in this folder
 
 - `API-v1.postman_collection.json`: full API v1 collection
-- `local.postman_environment.json`: local environment (`baseUrl`, `token`, `noteId`)
+- `local.postman_environment.json`: local environment (`baseUrl`, `token`, `noteId`, `tagId`, `userEmail`, `userPassword`)
 - `reports/`: generated report outputs
 
 ## Notes
 
-- Base URL used by default: `http://127.0.0.1:8000`
+- Base URL comes from `local.postman_environment.json` (`baseUrl`)
 - API prefix used by collection: `/api/v1`
-- Current backend is partially in stub mode, so some requests are only structure checks.
+- Collection is aligned with Step 3 API contract (Sanctum Bearer auth + real payloads).
