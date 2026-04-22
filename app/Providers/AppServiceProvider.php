@@ -4,6 +4,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 /* CLASS */
@@ -20,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
     /* boot */
     public function boot(): void
     {
-        // good place for observers, gates, macros - runs after everything is loaded
+        // define the 'api' rate limiter used by throttleApi() in bootstrap/app.php
+        // 60 requests per minute per IP - adjust limit as needed
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
+        });
     }
 }

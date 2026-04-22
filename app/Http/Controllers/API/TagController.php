@@ -1,15 +1,15 @@
 <?php
 // Tag controller - list and create endpoints
-// validates input, delegates to TagService, returns standard JSON
+// FormRequest handles validation (422 auto), delegates to TagService, returns standard JSON
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\StoreTagRequest;
 use App\Services\TagService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
-// DONE: Cleaned up dead auth checks (handled by middleware), added validation pattern.
+// DONE: Cleaned up dead auth checks (handled by middleware), FormRequest validation pattern.
 
 class TagController extends BaseApiController
 {
@@ -29,18 +29,10 @@ class TagController extends BaseApiController
 
     /* PUBLIC METHOD */
     /* store */
-    public function store(Request $request): JsonResponse
+    public function store(StoreTagRequest $request): JsonResponse
     {
-        // validate input - 422 if missing or malformed
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->error('Validation failed.', $validator->errors(), 422);
-        }
-
-        $tag = $this->tagService->create($validator->validated(), $request->user()->id);
+        // FormRequest validated before reaching here - 422 auto-thrown if invalid
+        $tag = $this->tagService->create($request->validated(), $request->user()->id);
 
         // 201 created on success
         return $this->success('Tag created successfully.', $tag, 201);

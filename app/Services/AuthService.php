@@ -5,6 +5,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
 
 // DONE: Implemented real register/login/logout logic with Sanctum tokens.
@@ -33,11 +34,11 @@ class AuthService
 
     /* PUBLIC METHOD */
     /* login */
-    public function login(array $payload): ?array
+    public function login(array $payload): array
     {
-        // check credentials - returns null if invalid
+        // credentials are invalid -> raise auth exception (mapped globally to 401 JSON)
         if (!Auth::attempt(['email' => $payload['email'], 'password' => $payload['password']])) {
-            return null;
+            throw new AuthenticationException('Invalid credentials.');
         }
 
         $user = Auth::user();

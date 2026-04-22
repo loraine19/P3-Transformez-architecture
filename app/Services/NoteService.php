@@ -5,6 +5,7 @@
 namespace App\Services;
 
 use App\Models\Note;
+use Illuminate\Auth\Access\AuthorizationException;
 
 // DONE: Implemented real note logic with user ownership enforcement.
 
@@ -39,22 +40,16 @@ class NoteService
 
     /* PUBLIC METHOD */
     /* delete */
-    public function delete(int $noteId, int $userId): string
+    public function delete(int $noteId, int $userId): void
     {
-        $note = Note::find($noteId);
-
         // 404 if note does not exist
-        if ($note === null) {
-            return 'not_found';
-        }
+        $note = Note::query()->findOrFail($noteId);
 
         // 403 if note belongs to another user - ownership check
         if ($note->user_id !== $userId) {
-            return 'forbidden';
+            throw new AuthorizationException('You do not own this note.');
         }
 
         $note->delete();
-
-        return 'deleted';
     }
 }

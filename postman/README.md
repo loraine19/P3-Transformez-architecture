@@ -208,3 +208,12 @@ Authorization: Bearer <token>
     - `201` success
     - `401` missing or invalid token
     - `422` validation failed
+
+## Manual front smoke test (done)
+
+Quick manual checks were executed after API/auth changes:
+
+- app loads correctly and CSS is applied
+- auth flow works (login/logout)
+- main user flow works (list/create/delete notes, list/create tags)
+- no blocking UI regression observed during this pass

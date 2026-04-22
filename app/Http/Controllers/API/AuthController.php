@@ -1,15 +1,16 @@
 <?php
 // Auth controller - register, login, logout endpoints
-// validates input, delegates to AuthService, returns standard JSON
+// FormRequest handles validation (422 auto), delegates to AuthService, returns standard JSON
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
-// DONE: Implemented register/login/logout with validation and correct HTTP codes.
+// DONE: Implemented register/login/logout with FormRequest validation and correct HTTP codes.
 
 class AuthController extends BaseApiController
 {
@@ -19,45 +20,21 @@ class AuthController extends BaseApiController
 
     /* PUBLIC METHOD */
     /* register */
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        // validate input - 422 if missing or malformed
-        $validator = Validator::make($request->all(), [
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email|unique:users,email',
-            'password'              => 'required|string|min:8|confirmed',
-        ]);
+        // FormRequest validated before reaching here - 422 auto-thrown if invalid
+        $data = $this->authService->register($request->validated());
 
-        if ($validator->fails()) {
-            return $this->error('Validation failed.', $validator->errors(), 422);
-        }
-
-        $data = $this->authService->register($validator->validated());
-
-        // 201 created on success
         return $this->success('User registered successfully.', $data, 201);
     }
 
     /* PUBLIC METHOD */
     /* login */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        // validate input - 422 if missing fields
-        $validator = Validator::make($request->all(), [
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->error('Validation failed.', $validator->errors(), 422);
-        }
-
-        $data = $this->authService->login($validator->validated());
-
-        // 401 if credentials invalid
-        if ($data === null) {
-            return $this->error('Invalid credentials.', null, 401);
-        }
+        // FormRequest validated before reaching here - 422 auto-thrown if invalid
+        // service throws AuthenticationException (-> 401) if credentials are wrong
+        $data = $this->authService->login($request->validated());
 
         return $this->success('Login successful.', $data);
     }

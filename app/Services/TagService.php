@@ -1,4 +1,6 @@
 <?php
+// Tag service - list and create tags scoped to authenticated user
+// called by TagController, returns data arrays
 
 namespace App\Services;
 
@@ -8,12 +10,10 @@ use App\Models\Tag;
 
 class TagService
 {
-    public function listForUser(?int $userId = null): array
+    /* PUBLIC METHOD */
+    /* listForUser */
+    public function listForUser(int $userId): array
     {
-        if (empty($userId)) {
-            return [];
-        }
-
         return Tag::query()
             ->where('user_id', $userId)
             ->orderBy('name')
@@ -21,15 +21,14 @@ class TagService
             ->toArray();
     }
 
-    public function create(array $payload, ?int $userId = null): array
+    /* PUBLIC METHOD */
+    /* create */
+    public function create(array $payload, int $userId): array
     {
-        if (empty($userId)) {
-            return [];
-        }
-
+        // name is guaranteed present - validated by StoreTagRequest before reaching here
         $tag = Tag::query()->create([
             'user_id' => $userId,
-            'name' => $payload['name'] ?? '',
+            'name'    => $payload['name'],
         ]);
 
         return $tag->only(['id', 'name', 'user_id']);
