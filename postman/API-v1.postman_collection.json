@@ -8,6 +8,7 @@
     "item": [
         {
             "name": "Auth - Register",
+            "description": "PUBLIC - Create user + return token | Pre-request: unique email generated ({{userEmail}})",
             "request": {
                 "method": "POST",
                 "header": [
@@ -66,6 +67,7 @@
         },
         {
             "name": "Auth - Login",
+            "description": "PUBLIC - Login | Save data.token -> {{token}}",
             "request": {
                 "method": "POST",
                 "header": [
@@ -120,6 +122,7 @@
         },
         {
             "name": "Notes - List",
+            "description": "PROTECTED - List notes | Auth: Bearer {{token}}",
             "request": {
                 "method": "GET",
                 "header": [
@@ -160,6 +163,7 @@
         },
         {
             "name": "Tags - List",
+            "description": "PROTECTED - List tags | Auth: Bearer {{token}}",
             "request": {
                 "method": "GET",
                 "header": [
@@ -200,6 +204,7 @@
         },
         {
             "name": "Tags - Create",
+            "description": "PROTECTED - Create tag | Save data.id -> {{tagId}}",
             "request": {
                 "method": "POST",
                 "header": [
@@ -254,6 +259,7 @@
         },
         {
             "name": "Notes - Create",
+            "description": "PROTECTED - Create note (uses {{tagId}}) | Save data.id -> {{noteId}}",
             "request": {
                 "method": "POST",
                 "header": [
@@ -308,6 +314,7 @@
         },
         {
             "name": "Notes - Delete",
+            "description": "PROTECTED - Delete note {{noteId}} | Expected: 200 / 404 / 403",
             "request": {
                 "method": "DELETE",
                 "header": [
@@ -349,6 +356,7 @@
         },
         {
             "name": "Auth - Logout",
+            "description": "PROTECTED - Logout | Revoke current token",
             "request": {
                 "method": "POST",
                 "header": [
