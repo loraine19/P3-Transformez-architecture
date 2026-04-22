@@ -4,18 +4,19 @@
 
 **Objectif** : transformer le monolithe Livewire en une API REST versionnée, sécurisée par token Bearer, validée par Newman.
 
-| Thème                | Ce qui a été livré                                                                                 | Commits                 |
-| :------------------- | :------------------------------------------------------------------------------------------------- | :---------------------- |
-| Structure MVC        | routes/api.php · controllers API · services · BaseApiController · contrat JSON status/message/data | 70f798e 11cf32a         |
-| Sécurité utilisateur | Notes et tags scopés user_id · ownership 403 · HasApiTokens sur User                               | 70f798e 11cf32a f604dc6 |
-| Auth Sanctum (token) | register → token 201 · login → token 200 · logout → révocation · 401 auto Sanctum                  | f604dc6                 |
-| Validation           | 4 FormRequest classes · zéro Validator::make dans les controllers · 422 via global handler         | a8a9104                 |
-| Gestion erreurs      | Global handler centralisé · 401/403/404/422/500 · format uniforme JSON pour toutes les exceptions  | d0d0dca a8a9104         |
-| Rate limiter         | throttleApi() \+ RateLimiter::for('api') · 60 req/min par IP · 429 si dépassé                      | a8a9104                 |
-| CORS                 | config/cors.php · CORS_ALLOWED_ORIGINS dans .env · zéro code à changer pour brancher le front      | a8a9104                 |
-| Tests Postman/Newman | Collection 8 requêtes · variables auto · email unique pré-request · Newman **10/10** assertions    | 11cf32a f604dc6 d0d0dca |
+| Thème                | Ce qui a été livré                                                                                    | Commits                 |
+| :------------------- | :---------------------------------------------------------------------------------------------------- | :---------------------- |
+| Structure MVC        | routes/api.php · controllers API · services · BaseApiController · contrat JSON status/message/data    | 70f798e 11cf32a         |
+| Sécurité utilisateur | Notes et tags scopés user_id · ownership 403 · HasApiTokens sur User                                  | 70f798e 11cf32a f604dc6 |
+| Auth Sanctum (token) | register → token 201 · login → token 200 · logout → révocation · 401 auto Sanctum                     | f604dc6                 |
+| Validation           | 6 FormRequest classes · zéro Validator::make dans les controllers · 422 via global handler            | a8a9104                 |
+| Gestion erreurs      | Global handler centralisé · 401/403/404/422/500 · format uniforme JSON pour toutes les exceptions     | d0d0dca a8a9104         |
+| Rate limiter         | throttleApi() \+ RateLimiter::for('api') · 60 req/min par IP · 429 si dépassé                         | a8a9104                 |
+| CORS                 | config/cors.php · CORS_ALLOWED_ORIGINS dans .env · zéro code à changer pour brancher le front         | a8a9104                 |
+| Tests Postman/Newman | Collection 11 requêtes · variables auto · email unique pré-request · Newman **15/15** assertions      | 11cf32a f604dc6 d0d0dca |
+| Endpoints User       | GET /api/v1/user · PUT /api/v1/user/profile · PUT /api/v1/user/password · UserService + 2 FormRequest | —                       |
 
-**Résultat final** : Newman 10/10 assertions, 0 échec.
+**Résultat final** : Newman 15/15 assertions, 0 échec.
 
 ---
 
@@ -62,14 +63,16 @@
 
 Format uniforme pour tous : { status, message, data }.
 
-**FormRequest** — 4 classes injectées automatiquement, zéro Validator::make dans les controllers :
+**FormRequest** — 6 classes injectées automatiquement, zéro Validator::make dans les controllers :
 
-| FormRequest      | Règles                                 |
-| :--------------- | :------------------------------------- |
-| RegisterRequest  | name, email unique, password confirmed |
-| LoginRequest     | email, password                        |
-| StoreNoteRequest | text, tag_id exists:tags,id            |
-| StoreTagRequest  | name max:255                           |
+| FormRequest           | Règles                                 |
+| :-------------------- | :------------------------------------- |
+| RegisterRequest       | name, email unique, password confirmed |
+| LoginRequest          | email, password                        |
+| StoreNoteRequest      | text, tag_id exists:tags,id            |
+| StoreTagRequest       | name max:255                           |
+| UpdateProfileRequest  | name, email unique (ignore soi-même)   |
+| UpdatePasswordRequest | current_password, password confirmé    |
 
 **Services** : lèvent des exceptions métier, les controllers orchestrent seulement.
 
@@ -79,6 +82,10 @@ Format uniforme pour tous : { status, message, data }.
 - app/Http/Requests/LoginRequest.php
 - app/Http/Requests/StoreNoteRequest.php
 - app/Http/Requests/StoreTagRequest.php
+- app/Http/Requests/UpdateProfileRequest.php
+- app/Http/Requests/UpdatePasswordRequest.php
+- app/Http/Controllers/API/UserController.php
+- app/Services/UserService.php
 
     ### **Fichiers modifiés**
 
@@ -139,7 +146,7 @@ CORS_ALLOWED_ORIGINS=https://myapp.com
 
 ### **Ce qui a été mis en place**
 
-- Collection API-v1.postman_collection.json : 8 requêtes couvrant tout le flux
+- Collection API-v1.postman_collection.json : 11 requêtes couvrant tout le flux
 - Environnement local.postman_environment.json : baseUrl, token, tagId, noteId
 - Pré-request register : génère un email unique test.user.{timestamp}@example.com pour éviter les collisions SQL
 - Variables token, tagId, noteId alimentées automatiquement pendant la collection
@@ -147,7 +154,7 @@ CORS_ALLOWED_ORIGINS=https://myapp.com
 
 **Résultat Newman** :
 
-8 requests — 10 assertions — 0 failed
+11 requests — 15 assertions — 0 failed
 
 ### **Fichiers créés/modifiés**
 
@@ -198,14 +205,16 @@ CORS_ALLOWED_ORIGINS=https://myapp.com
 
 Format uniforme pour tous : { status, message, data }.
 
-**FormRequest** — 4 classes injectées automatiquement, zéro Validator::make dans les controllers :
+**FormRequest** — 6 classes injectées automatiquement, zéro Validator::make dans les controllers :
 
-| FormRequest      | Règles                                 |
-| :--------------- | :------------------------------------- |
-| RegisterRequest  | name, email unique, password confirmed |
-| LoginRequest     | email, password                        |
-| StoreNoteRequest | text, tag_id exists:tags,id            |
-| StoreTagRequest  | name max:255                           |
+| FormRequest           | Règles                                 |
+| :-------------------- | :------------------------------------- |
+| RegisterRequest       | name, email unique, password confirmed |
+| LoginRequest          | email, password                        |
+| StoreNoteRequest      | text, tag_id exists:tags,id            |
+| StoreTagRequest       | name max:255                           |
+| UpdateProfileRequest  | name, email unique (ignore soi-même)   |
+| UpdatePasswordRequest | current_password, password confirmé    |
 
 **Services** : lèvent des exceptions métier, les controllers orchestrent seulement.
 
@@ -215,6 +224,10 @@ Format uniforme pour tous : { status, message, data }.
 - app/Http/Requests/LoginRequest.php
 - app/Http/Requests/StoreNoteRequest.php
 - app/Http/Requests/StoreTagRequest.php
+- app/Http/Requests/UpdateProfileRequest.php
+- app/Http/Requests/UpdatePasswordRequest.php
+- app/Http/Controllers/API/UserController.php
+- app/Services/UserService.php
 
     ### **Fichiers modifiés**
 
@@ -275,7 +288,7 @@ CORS_ALLOWED_ORIGINS=https://myapp.com
 
 ### **Ce qui a été mis en place**
 
-- Collection API-v1.postman_collection.json : 8 requêtes couvrant tout le flux
+- Collection API-v1.postman_collection.json : 11 requêtes couvrant tout le flux
 - Environnement local.postman_environment.json : baseUrl, token, tagId, noteId
 - Pré-request register : génère un email unique test.user.{timestamp}@example.com pour éviter les collisions SQL
 - Variables token, tagId, noteId alimentées automatiquement pendant la collection
@@ -283,7 +296,7 @@ CORS_ALLOWED_ORIGINS=https://myapp.com
 
 **Résultat Newman** :
 
-8 requests — 10 assertions — 0 failed
+11 requests — 15 assertions — 0 failed
 
 ### **Fichiers créés/modifiés**
 
@@ -303,5 +316,6 @@ CORS_ALLOWED_ORIGINS=https://myapp.com
 | Authentification Sanctum Bearer Token           | ✅     |
 | Gestion des erreurs centralisée \+ FormRequest  | ✅     |
 | Rate limiter (60 req/min) \+ CORS via .env      | ✅     |
-| Newman 10/10 assertions                         | ✅     |
+| Newman 15/15 assertions                         | ✅     |
+| Endpoints user (GET + 2×PUT) via UserService    | ✅     |
 | Documentation Postman README                    | ✅     |

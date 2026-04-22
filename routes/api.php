@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\NoteController;
 use App\Http\Controllers\API\TagController;
+use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
 
 // DONE: Protected routes with auth:sanctum middleware - public: register/login, protected: logout/notes/tags.
@@ -31,5 +32,9 @@ Route::prefix('v1')->group(function (): void {
 
         Route::get('/tags', [TagController::class, 'index']);
         Route::post('/tags', [TagController::class, 'store']);
+
+        Route::get('/user', [UserController::class, 'show']);
+        Route::put('/user/profile', [UserController::class, 'updateProfile']);
+        Route::put('/user/password', [UserController::class, 'updatePassword']);
     });
 });
