@@ -1,165 +1,197 @@
-# **CHANGELOG - 2**
+# **CHANGELOG - Branche feature/exo1-api-auth-minimum**
 
-## **Commit :**
+## Vue d'ensemble
 
-feat(api): implement Sanctum bearer auth and secure v1 notes/tags endpoints
+**Objectif de la branche** : transformer le monolithe Livewire en une API REST versionnée,
+sécurisée par token Bearer (Sanctum), validée par Newman.
 
-1. ### **Recap de travail effectue**
-    1. Sanctum active cote backend
-        1. Package Sanctum installe
-        2. Config Sanctum publiee
-        3. Migration tokens executee (personal_access_tokens)
-        4. Variables Sanctum ajoutees dans .env.example
-    2. Auth utilisateur passe de stub a logique reelle
-        1. User model connecte a Sanctum via HasApiTokens
-        2. Register: creation user + generation token
-        3. Login: verification credentials + regeneration token
-        4. Logout: revocation du token courant
-    3. AuthController finalise
-        1. Validation explicite des entrees
-        2. Reponses JSON homognes (status, message, data)
-        3. Codes HTTP explicites (201, 200, 401, 422)
-    4. Routes API v1 securisees
-        1. Routes publiques: register, login
-        2. Routes protegees par auth:sanctum: logout, notes, tags
-    5. Notes et Tags alignes sur la securite utilisateur
-        1. Notes scopees par user_id
-        2. Controle ownership sur suppression de note (403 si non proprietaire)
-        3. Mapping erreurs metier vers HTTP (404, 403)
-        4. Validation TagController harmonisee avec les autres controllers
-    6. Collection Postman adaptee au contrat API reel
-        1. Headers Accept/Authorization harmonises
-        2. Payload note aligne (text, tag_id)
-        3. Variables token, tagId, noteId automatisees
-        4. prerequest register pour email unique
-    7. Validation technique
-        1. Run Newman execute sur la collection v1
-        2. Resultat final: 10 assertions passees, 0 echec
+**5 commits réels** (depuis `main`) :
 
-2. ### **Fichiers crees**
-    1. .../config/sanctum.php
-    2. .../database/migrations/2026_04_21_191543_create_personal_access_tokens_table.php
+| # | Hash | Message |
+|---|------|---------|
+| 1 | `70f798e` | feat(api): setup v1 API skeleton with controllers, services and tag ownership |
+| 2 | `11cf32a` | feat(api): prepare v1 endpoints, user-scoped tags and Postman validation flow |
+| 3 | `f604dc6` | feat(api): implement Sanctum bearer auth and secure v1 notes/tags endpoints |
+| 4 | `d0d0dca` | docs(postman): improve API readability |
+| 5 | `a8a9104` | refactor(api): FormRequest validation + CORS env-based config + rate limiter fix |
 
-3. ### **Fichiers modifies**
-    1. .../.env.example
-    2. .../composer.json
-    3. .../composer.lock
-    4. .../app/Models/User.php
-    5. .../app/Services/AuthService.php
-    6. .../app/Services/NoteService.php
-    7. .../app/Http/Controllers/API/AuthController.php
-    8. .../app/Http/Controllers/API/NoteController.php
-    9. .../app/Http/Controllers/API/TagController.php
-    10. .../routes/api.php
-    11. .../postman/API-v1.postman_collection.json
-    12. .../postman/local.postman_environment.json
-    13. .../postman/reports/postman-report.html
-    14. .../postman/reports/postman-report.json
-
-4. ### **Tests et verification**
-    1. Auth endpoints verifies (register, login, logout)
-    2. Routes protegees verifiees avec Bearer token
-    3. Notes/Tags verifies avec create/list/delete selon collection
-    4. Newman final valide: 8 requests, 10 assertions, 0 echec
-
-5. ### **Note de progression (Step 3 Exo 1)**
-    1. Step 3 respecte: routes REST exposees, statuts HTTP explicites, format JSON homogene.
-    2. Le rythme est reste coherent: on a d abord pose la securite, puis aligne les controllers/services, puis valide par tests API.
-    3. Aucun saut de phase: on est reste sur l objectif Step 3 (API + auth + tests), sans basculer sur Step 4 documentation finale.
+**Résultat final** : Newman 10/10 assertions, 0 échec — API fonctionnelle et documentée.
 
 ---
 
-## **Commit :**
+## 1. Structure API : routes, controllers, services
 
-refactor(api): homogenize error handling + introduce FormRequest validation
+**Commits** : `70f798e` · `11cf32a`
 
-1. ### **Recap de travail effectue**
-    1. Error handling homogenise (pattern service-first)
-        1. Services levent des exceptions domain (AuthenticationException, AuthorizationException)
-        2. Controllers simplifies: ne mappent plus les erreurs manuellement
-        3. Global handler (bootstrap/app.php) formate tout en JSON homogene 401/403/404/422/500
-        4. `withExceptions`: 401/403 utilisent `$e->getMessage()` pour remonter le message service
-    2. Middleware API configure
-        1. `throttleApi()` active dans `withMiddleware`
-        2. TODO CORS commente (a configurer quand front decouple)
-    3. FormRequest introduit pour finaliser la separation controller/validation
-        1. `RegisterRequest`: valide name/email/password/confirmed
-        2. `LoginRequest`: valide email/password
-        3. `StoreNoteRequest`: valide text/tag_id (avec exists:tags,id)
-        4. `StoreTagRequest`: valide name
-        5. Validation auto-throws `ValidationException` -> 422 via global handler
-        6. Controllers ne contiennent plus aucun `Validator::make` ni `$validator->fails()`
-    4. TagService aligne sur le pattern des autres services
-        1. Header comment ajoute (pattern homogene)
-        2. `$payload['name'] ?? ''` corrige en `$payload['name']` (validation garantit sa presence)
-        3. Commentaires `/* PUBLIC METHOD */` ajoutes
-    5. Architecture resultante: separation totale par responsabilite
-        1. FormRequest: valide le payload entrant
-        2. Controller: orchestre (injecte request validee + user id, retourne JSON)
-        3. Service: logique metier, leve les exceptions
-        4. Global handler: formate toutes les erreurs en JSON
+### Ce qui a été mis en place
 
-2. ### **Fichiers crees**
-    1. .../app/Http/Requests/RegisterRequest.php
-    2. .../app/Http/Requests/LoginRequest.php
-    3. .../app/Http/Requests/StoreNoteRequest.php
-    4. .../app/Http/Requests/StoreTagRequest.php
+- `routes/api.php` : prefix `/api/v1`, routes publiques (`register`, `login`) et protégées (`logout`, `notes`, `tags`)
+- 3 controllers API dédiés : `AuthController`, `NoteController`, `TagController`
+- `BaseApiController` : helpers `success()` et `error()` pour imposer le contrat JSON `status/message/data`
+- 3 services : `AuthService`, `NoteService`, `TagService` — isolation de la logique métier
+- Notes et tags scopés par `user_id` côté serveur (le client ne peut pas accéder aux données d'un autre user)
+- Ownership note : `403` si l'utilisateur essaie de supprimer une note qui ne lui appartient pas
 
-3. ### **Fichiers modifies**
-    1. .../bootstrap/app.php (withMiddleware + withExceptions)
-    2. .../app/Services/AuthService.php (login throws AuthenticationException)
-    3. .../app/Services/NoteService.php (delete void + findOrFail + AuthorizationException)
-    4. .../app/Services/TagService.php (header + strict payload + pattern comments)
-    5. .../app/Http/Controllers/API/AuthController.php (FormRequest injection)
-    6. .../app/Http/Controllers/API/NoteController.php (FormRequest injection)
-    7. .../app/Http/Controllers/API/TagController.php (FormRequest injection)
-    8. .../postman/README.md (doc API + unique email + smoke test)
-    9. .../postman/API-v1.postman_collection.json (descriptions compactes)
+### Fichiers créés
 
-4. ### **Tests et verification**
-    1. Lint PHP valide sur tous les fichiers modifies (php -l)
-    2. Pattern verifie: services levent, controllers orchestrent, FormRequest valide
-    3. Smoke test manuel realise (note dans postman/README.md)
-
-5. ### **Note de progression**
-    1. Separation des responsabilites complete: FormRequest / Controller / Service / GlobalHandler
-    2. Aucun `Validator::make` restant dans les controllers
-    3. Prochain: CORS config quand front React decouple (TODO commente dans bootstrap/app.php)
+- `routes/api.php`
+- `app/Http/Controllers/API/BaseApiController.php`
+- `app/Http/Controllers/API/AuthController.php`
+- `app/Http/Controllers/API/NoteController.php`
+- `app/Http/Controllers/API/TagController.php`
+- `app/Services/AuthService.php`
+- `app/Services/NoteService.php`
+- `app/Services/TagService.php`
 
 ---
 
-## **Commit :**
+## 2. Authentification Sanctum (token Bearer)
 
-fix(api): configure rate limiter + add CORS env-based config
+**Commit** : `f604dc6`
 
-1. ### **Recap de travail effectue**
-    1. RateLimiter `api` declare dans AppServiceProvider
-        1. `throttleApi()` dans bootstrap/app.php attend un rate limiter nomme `api`
-        2. En Laravel 11, il n'est plus cree automatiquement (ancien RouteServiceProvider)
-        3. Fix: `RateLimiter::for('api', ...)` defini dans `AppServiceProvider::boot()`
-        4. Limite: 60 req/min par IP
-        5. Sans ce fix: 500 systematique sur toutes les routes API
-    2. CORS configure via `.env` - aucun code a changer pour câbler le front
-        1. `config/cors.php` cree avec `allowed_origins` lu depuis `.env`
-        2. Variable `CORS_ALLOWED_ORIGINS=*` ajoutee dans `.env.example`
-        3. En prod: `CORS_ALLOWED_ORIGINS=https://myapp.com` dans `.env` uniquement
-        4. `supports_credentials: false` (mode Bearer token, pas SPA cookie)
-        5. HandleCors est deja dans la stack Laravel globale - pas de registration manuelle
+### Ce qui a été mis en place
 
-2. ### **Fichiers crees**
-    1. .../config/cors.php
+- Package Sanctum installé, config publiée, migration `personal_access_tokens` exécutée
+- `User` model : trait `HasApiTokens` + cast `password → hashed` (plus besoin de `Hash::make`)
+- `register` : crée le user et génère un token → `201`
+- `login` : vérifie les credentials, supprime les anciens tokens, génère un nouveau → `200`
+- `logout` : révoque uniquement le token courant → `200`
+- Routes protégées par `auth:sanctum` : `401` automatique si token absent ou invalide
 
-3. ### **Fichiers modifies**
-    1. .../app/Providers/AppServiceProvider.php (RateLimiter::for api)
-    2. .../.env.example (CORS_ALLOWED_ORIGINS ajoutee)
-    3. .../bootstrap/app.php (TODO CORS remplace par DONE)
+### Fichiers créés/modifiés
 
-4. ### **Tests et verification**
-    1. Newman relance: 10/10 assertions passees, 0 echec
-    2. 500 sur register disparu apres fix AppServiceProvider
-    3. Comportement verifie: 429 si depassement, 500 si limiter absent
+- `config/sanctum.php` (créé)
+- `database/migrations/2026_04_21_191543_create_personal_access_tokens_table.php` (créé)
+- `app/Models/User.php` (HasApiTokens)
+- `app/Services/AuthService.php` (logique register/login/logout réelle)
+- `app/Http/Controllers/API/AuthController.php` (endpoints finalisés)
+- `.env.example` (variables Sanctum)
+- `composer.json` / `composer.lock`
 
-5. ### **Note de progression**
-    1. Step 3 techniquement complet et valide Newman
-    2. CORS pret pour branchement front: juste `.env` a modifier
-    3. Passage en Step 4: documentation architecture finale
+---
+
+## 3. Gestion des erreurs homogène + FormRequest
+
+**Commits** : `d0d0dca` · `a8a9104` (partiel)
+
+### Ce qui a été mis en place
+
+**Error handling centralisé** (`bootstrap/app.php` — `withExceptions`) :
+
+| Exception | Code HTTP | Source |
+|---|---|---|
+| `ValidationException` | 422 | FormRequest auto-throw |
+| `AuthenticationException` | 401 | Service (login) ou Sanctum |
+| `AuthorizationException` | 403 | Service (delete note) |
+| `ModelNotFoundException` | 404 | Service (findOrFail) |
+| `Exception` | 500 | Toute erreur inattendue |
+
+Format uniforme pour tous : `{ status, message, data }`.
+
+**FormRequest** — 4 classes injectées automatiquement, zéro `Validator::make` dans les controllers :
+
+| FormRequest | Règles |
+|---|---|
+| `RegisterRequest` | `name`, `email` unique, `password` confirmed |
+| `LoginRequest` | `email`, `password` |
+| `StoreNoteRequest` | `text`, `tag_id` exists:tags,id |
+| `StoreTagRequest` | `name` max:255 |
+
+**Services** : lèvent des exceptions métier, les controllers orchestrent seulement.
+
+### Fichiers créés
+
+- `app/Http/Requests/RegisterRequest.php`
+- `app/Http/Requests/LoginRequest.php`
+- `app/Http/Requests/StoreNoteRequest.php`
+- `app/Http/Requests/StoreTagRequest.php`
+
+### Fichiers modifiés
+
+- `bootstrap/app.php` (withExceptions + withMiddleware)
+- `app/Services/AuthService.php` (login throws `AuthenticationException`)
+- `app/Services/NoteService.php` (delete void, findOrFail, throws `AuthorizationException`)
+- `app/Services/TagService.php` (pattern homogène, strict payload)
+- `app/Http/Controllers/API/AuthController.php` (FormRequest injectée)
+- `app/Http/Controllers/API/NoteController.php` (FormRequest injectée)
+- `app/Http/Controllers/API/TagController.php` (FormRequest injectée)
+- `postman/README.md`
+- `postman/API-v1.postman_collection.json`
+
+---
+
+## 4. Middleware : rate limiter + CORS
+
+**Commit** : `a8a9104` (partiel)
+
+### Ce qui a été mis en place
+
+**Rate limiter** :
+- `throttleApi()` activé dans `bootstrap/app.php` → attend un limiter nommé `api`
+- En Laravel 11, ce limiter n'est plus créé automatiquement (ancien `RouteServiceProvider` supprimé)
+- Fix : `RateLimiter::for('api', ...)` déclaré dans `AppServiceProvider::boot()`
+- Limite : 60 req/min par IP → `429` si dépassé, `500` (MissingRateLimiterException) si absent
+
+**CORS** :
+- `HandleCors` est déjà dans la stack Laravel globale — aucune registration manuelle
+- `config/cors.php` lit `CORS_ALLOWED_ORIGINS` depuis `.env`
+- Pour brancher le front React : juste changer `.env`, zéro modification de code
+
+```env
+# dev
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+# prod
+CORS_ALLOWED_ORIGINS=https://myapp.com
+```
+
+### Fichiers créés
+
+- `config/cors.php`
+
+### Fichiers modifiés
+
+- `app/Providers/AppServiceProvider.php` (RateLimiter::for api)
+- `.env.example` (CORS_ALLOWED_ORIGINS)
+- `bootstrap/app.php` (TODO → DONE)
+
+---
+
+## 5. Collection Postman et validation Newman
+
+**Commits** : `11cf32a` · `f604dc6` · `d0d0dca`
+
+### Ce qui a été mis en place
+
+- Collection `API-v1.postman_collection.json` : 8 requêtes couvrant tout le flux
+- Environnement `local.postman_environment.json` : `baseUrl`, `token`, `tagId`, `noteId`
+- Pré-request `register` : génère un email unique `test.user.{timestamp}@example.com` pour éviter les collisions SQL
+- Variables `token`, `tagId`, `noteId` alimentées automatiquement pendant la collection
+- `postman/README.md` : doc API complète (flux, payloads, codes HTTP, email unique)
+
+**Résultat Newman** :
+
+```
+8 requests — 10 assertions — 0 failed
+```
+
+### Fichiers créés/modifiés
+
+- `postman/API-v1.postman_collection.json`
+- `postman/local.postman_environment.json`
+- `postman/README.md`
+- `postman/reports/postman-report.html`
+- `postman/reports/postman-report.json`
+
+---
+
+## Récapitulatif final
+
+| Thème | Statut |
+|---|---|
+| Structure MVC (routes / controllers / services) | ✅ |
+| Authentification Sanctum Bearer Token | ✅ |
+| Gestion des erreurs centralisée + FormRequest | ✅ |
+| Rate limiter (60 req/min) + CORS via .env | ✅ |
+| Newman 10/10 assertions | ✅ |
+| Documentation Postman README | ✅ |
+
