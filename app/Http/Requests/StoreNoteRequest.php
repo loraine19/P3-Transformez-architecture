@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreNoteRequest extends FormRequest
 {
-    /* always authorized - ownership check is in NoteService::delete() */
+    /* always authorized - auth check handled by route middleware */
     public function authorize(): bool
     {
         return true;
