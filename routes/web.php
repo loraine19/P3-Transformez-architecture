@@ -22,8 +22,3 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-
-// React SPA — catch-all pour React Router (basename="/app")
-Route::get('/app/{any?}', function () {
-    return view('spa');
-})->where('any', '.*')->name('spa');
