@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -58,7 +58,9 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         /* 403 FORBIDDEN */
-        $exceptions->render(function (AuthorizationException $e, Request $request) {
+        // Note: prepareException() converts AuthorizationException → AccessDeniedHttpException
+        // before renderViaCallbacks() is called, so we must catch the converted type.
+        $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
             if (!$request->is('api/*')) {
                 return null;
             }
@@ -96,7 +98,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ], 404);
         });
 
-        /* 500 SERVER ERROR - DEBUG */
+        /* 500 SERVER ERROR - CATCH-ALL */
         $exceptions->render(function (\Throwable $e, Request $request) {
             if (!$request->is('api/*')) {
                 return null;
