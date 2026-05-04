@@ -1,6 +1,6 @@
 name: tests
 
-# Déclenchement : à chaque push ou Pull Request vers develop ou main
+# Trigger: on every push or Pull Request targeting develop or main
 on:
   push:
     branches:
@@ -13,16 +13,16 @@ on:
 
 jobs:
   ci:
-    # GitHub crée une machine Ubuntu vierge pour chaque exécution
+    # GitHub spins up a fresh Ubuntu VM for each run
     runs-on: ubuntu-latest
     environment: Testing
 
     steps:
-      # Télécharge le code du repo sur la machine Ubuntu
+      # Download the repository code onto the Ubuntu machine
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Installe PHP 8.4 + Composer + xdebug (couverture de code)
+      # Install PHP 8.4 + Composer + xdebug (code coverage)
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -30,19 +30,19 @@ jobs:
           tools: composer:v2
           coverage: xdebug
 
-      # Installe les dépendances PHP (dossier vendor/) sans questions interactives
+      # Install PHP dependencies (vendor/) with no interactive prompts
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      # Crée le .env à partir du .env.example (le vrai .env n'est pas dans le repo)
-      # .env.example utilise SQLite — aucune base externe nécessaire
+      # Create .env from .env.example (the real .env is gitignored)
+      # .env.example uses SQLite — no external database needed
       - name: Copy Environment File
         run: cp .env.example .env
 
-      # Génère APP_KEY dans le .env — Laravel en a besoin pour démarrer
+      # Generate APP_KEY in .env — Laravel requires it to boot
       - name: Generate Application Key
         run: php artisan key:generate
 
-      # Lance tous les tests Pest — vert = OK, rouge = notification d'échec
+      # Run all Pest tests — green = OK, red = failure notification
       - name: Run Tests
         run: ./vendor/bin/pest

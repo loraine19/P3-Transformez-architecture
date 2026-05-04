@@ -1,6 +1,6 @@
 name: linter
 
-# Déclenchement : à chaque push ou Pull Request vers develop ou main
+# Trigger: on every push or Pull Request targeting develop or main
 on:
   push:
     branches:
@@ -11,36 +11,36 @@ on:
       - develop
       - main
 
-# Permission d'écriture sur le repo (utile si on active l'auto-commit Pint plus bas)
+# Write permission on the repo (needed if the Pint auto-commit step below is enabled)
 permissions:
   contents: write
 
 jobs:
   quality:
-    # GitHub crée une machine Ubuntu vierge pour chaque exécution
+    # GitHub spins up a fresh Ubuntu VM for each run
     runs-on: ubuntu-latest
     environment: Testing
     steps:
-      # Télécharge le code du repo sur la machine Ubuntu
+      # Download the repository code onto the Ubuntu machine
       - uses: actions/checkout@v4
 
-      # Installe PHP 8.4 (pas besoin de Composer ici, Pint est déjà dans vendor/)
+      # Install PHP 8.4 (Composer not needed here, Pint is already in vendor/)
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
 
-      # Installe les dépendances PHP uniquement (silencieux, pas de scripts post-install)
+      # Install PHP dependencies only (silent mode, no post-install scripts)
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      # Lance Laravel Pint — vérifie que le code PHP respecte les conventions de style
-      # Pint lit pint.json si présent, sinon applique le style Laravel par défaut
-      # Si une ligne est mal formatée → le job échoue
+      # Run Laravel Pint — checks that PHP code follows style conventions
+      # Pint reads pint.json if present, otherwise applies the default Laravel style
+      # Any formatting violation → job fails
       - name: Run Pint
         run: vendor/bin/pint
 
-      # Option désactivée : commit automatique des corrections Pint directement dans le repo
+      # Disabled: automatically commit Pint style fixes directly into the repo
       # - name: Commit Changes
       #   uses: stefanzweifel/git-auto-commit-action@v5
       #   with:
