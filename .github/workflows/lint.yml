@@ -1,5 +1,6 @@
 name: linter
 
+# Déclenchement : à chaque push ou Pull Request vers develop ou main
 on:
   push:
     branches:
@@ -10,32 +11,36 @@ on:
       - develop
       - main
 
+# Permission d'écriture sur le repo (utile si on active l'auto-commit Pint plus bas)
 permissions:
   contents: write
 
 jobs:
   quality:
+    # GitHub crée une machine Ubuntu vierge pour chaque exécution
     runs-on: ubuntu-latest
     environment: Testing
     steps:
+      # Télécharge le code du repo sur la machine Ubuntu
       - uses: actions/checkout@v4
 
+      # Installe PHP 8.4 (pas besoin de Composer ici, Pint est déjà dans vendor/)
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
 
-      - name: Add Flux Credentials Loaded From ENV
-        run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
-
+      # Installe les dépendances PHP uniquement (silencieux, pas de scripts post-install)
       - name: Install Dependencies
-        run: |
-          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+      # Lance Laravel Pint — vérifie que le code PHP respecte les conventions de style
+      # Pint lit pint.json si présent, sinon applique le style Laravel par défaut
+      # Si une ligne est mal formatée → le job échoue
       - name: Run Pint
         run: vendor/bin/pint
 
+      # Option désactivée : commit automatique des corrections Pint directement dans le repo
       # - name: Commit Changes
       #   uses: stefanzweifel/git-auto-commit-action@v5
       #   with:
