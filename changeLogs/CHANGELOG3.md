@@ -23,11 +23,11 @@ Route unique retournant un stub JSON `{ status, message, data }` — `routes/aut
 
 ### Nettoyage du code
 
-| Fichier                                     | Modification                                    |
-| ------------------------------------------- | ----------------------------------------------- |
-| Tous les controllers + services + modèles   | Suppression `// DONE:` et commentaires de header |
-| `app/Models/User.php`                       | Suppression `initials()` (méthode Blade inutile) |
-| `app/Services/AuthService.php` (register/login) | Ajout `user.id` dans le payload de retour   |
+| Fichier                                         | Modification                                     |
+| ----------------------------------------------- | ------------------------------------------------ |
+| Tous les controllers + services + modèles       | Suppression `// DONE:` et commentaires de header |
+| `app/Models/User.php`                           | Suppression `initials()` (méthode Blade inutile) |
+| `app/Services/AuthService.php` (register/login) | Ajout `user.id` dans le payload de retour        |
 
 ### Convention Clean Architecture conservée
 
@@ -46,29 +46,29 @@ Route unique retournant un stub JSON `{ status, message, data }` — `routes/aut
 
 ### Front — Tests manuels exploratoires
 
-| Scénario                                   | Résultat |
-| ------------------------------------------ | -------- |
-| Register → redirect login                  | ✅       |
-| Login → dashboard                          | ✅       |
-| Dashboard charge notes + tags via API      | ✅       |
-| Créer une note → ajout sans reload         | ✅       |
-| Supprimer une note → retrait sans reload   | ✅       |
-| Créer un tag                               | ✅       |
-| Logout → redirect `/login`                 | ✅       |
-| Accès `/` sans token → redirect login      | ✅       |
+| Scénario                                 | Résultat |
+| ---------------------------------------- | -------- |
+| Register → redirect login                | ✅       |
+| Login → dashboard                        | ✅       |
+| Dashboard charge notes + tags via API    | ✅       |
+| Créer une note → ajout sans reload       | ✅       |
+| Supprimer une note → retrait sans reload | ✅       |
+| Créer un tag                             | ✅       |
+| Logout → redirect `/login`               | ✅       |
+| Accès `/` sans token → redirect login    | ✅       |
 
 ---
 
 ## Résultat
 
-| Critère                      | Avant                | Après         |
-| ---------------------------- | -------------------- | ------------- |
-| Fichiers Livewire            | 3 classes            | 0             |
-| Fichiers Blade               | 30+                  | 0             |
-| Routes web                   | ~10 routes Livewire  | 1 stub JSON   |
-| Commentaires `// DONE:`      | présents             | supprimés     |
-| `User::initials()`           | présente             | supprimée     |
-| `user.id` dans réponse auth  | absent               | présent       |
-| Backend réellement API-only  | ❌                   | ✅            |
-| Newman API                   | —                    | 15/15 ✅      |
-| Tests front manuels          | —                    | 8/8 ✅        |
+| Critère                     | Avant               | Après       |
+| --------------------------- | ------------------- | ----------- |
+| Fichiers Livewire           | 3 classes           | 0           |
+| Fichiers Blade              | 30+                 | 0           |
+| Routes web                  | ~10 routes Livewire | 1 stub JSON |
+| Commentaires `// DONE:`     | présents            | supprimés   |
+| `User::initials()`          | présente            | supprimée   |
+| `user.id` dans réponse auth | absent              | présent     |
+| Backend réellement API-only | ❌                  | ✅          |
+| Newman API                  | —                   | 15/15 ✅    |
+| Tests front manuels         | —                   | 8/8 ✅      |

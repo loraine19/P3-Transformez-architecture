@@ -5,7 +5,7 @@
     },
     "item": [
       {
-        "id": "263f8e13-5fbb-4a3a-882c-8d552eae5cf7",
+        "id": "5d802635-d922-4dcb-8195-6b637708ee65",
         "name": "Auth - Register",
         "description": {
           "content": "PUBLIC - Create user + return token | Pre-request: unique email generated ({{userEmail}})",
@@ -45,19 +45,19 @@
           {
             "listen": "prerequest",
             "script": {
-              "id": "3be4a04e-a08e-4fc1-bdb1-b711b9b367c0",
+              "id": "1eb6c236-1f11-48c3-a64c-b7c3e4b23faa",
               "type": "text/javascript",
               "exec": [
                 "pm.environment.set('userEmail', `test.user.${Date.now()}@example.com`);",
                 "pm.environment.set('userPassword', 'password123');"
               ],
-              "_lastExecutionId": "7ef0366f-093e-42a8-9080-a0d3143540e3"
+              "_lastExecutionId": "c81af56e-54f2-40aa-8d02-df3905faa7ff"
             }
           },
           {
             "listen": "test",
             "script": {
-              "id": "371b1067-161d-4690-a363-a9eaa60dbed6",
+              "id": "ba39ba28-f807-4360-89f1-ef449a9b16ce",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Register returns 200/201', function () {",
@@ -68,13 +68,13 @@
                 "    pm.response.to.be.json;",
                 "});"
               ],
-              "_lastExecutionId": "714bf244-3faf-4059-8a61-584adcad1abf"
+              "_lastExecutionId": "95e972ba-ccfe-473d-945f-e67a8ff2ab6d"
             }
           }
         ]
       },
       {
-        "id": "b0eb8d73-6757-4fba-a0fc-e339b2acd0cb",
+        "id": "df216dd2-bdc6-43ed-be13-2c992f91fa16",
         "name": "Auth - Login",
         "description": {
           "content": "PUBLIC - Login | Save data.token -> {{token}}",
@@ -114,7 +114,7 @@
           {
             "listen": "test",
             "script": {
-              "id": "184318f0-8699-4949-9641-82fb16e75cdc",
+              "id": "1bd8baf2-4837-4a19-9a82-df43c3f777c5",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Login returns 200', function () {",
@@ -131,13 +131,13 @@
                 "    pm.expect(pm.environment.get('token')).to.be.a('string').and.not.empty;",
                 "});"
               ],
-              "_lastExecutionId": "56691e5c-e895-40f9-8987-02de973cd839"
+              "_lastExecutionId": "d66d267c-7b6b-4bf9-aed5-b11593551930"
             }
           }
         ]
       },
       {
-        "id": "c23704d3-475d-4bad-9b99-d4e558790f98",
+        "id": "524ff234-09e3-416f-9dbb-0fa7f97d4c40",
         "name": "Notes - List",
         "description": {
           "content": "PROTECTED - List notes | Auth: Bearer {{token}}",
@@ -173,20 +173,20 @@
           {
             "listen": "test",
             "script": {
-              "id": "f41e2f1a-b754-469e-ae20-6aeb160079f2",
+              "id": "4a0a35fd-2af0-4c2f-abe4-4139f76cec31",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Notes list returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "5fd34677-3780-4a07-8462-f965939fe01d"
+              "_lastExecutionId": "e698c681-2518-4b89-8208-99ae46116eb0"
             }
           }
         ]
       },
       {
-        "id": "5e8ef5be-6f7a-4d57-9dc2-ab35c7f1cf31",
+        "id": "9b392ea5-38ec-4bd2-89e4-a969949ed828",
         "name": "Tags - List",
         "description": {
           "content": "PROTECTED - List tags | Auth: Bearer {{token}}",
@@ -222,20 +222,20 @@
           {
             "listen": "test",
             "script": {
-              "id": "454ae2b3-8c15-4ed4-9bc1-97cb17c0fc71",
+              "id": "f7eda7e2-39a8-4bad-9c74-b4605fe99ec1",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Tags list returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "5bbb0f76-c6ff-4d3a-a87d-c85b61654625"
+              "_lastExecutionId": "f90d0755-f036-4572-bb88-cfe7420c709a"
             }
           }
         ]
       },
       {
-        "id": "1e91ec37-fb1a-4461-b3dc-77ee85610870",
+        "id": "f4d031e8-947e-4136-a4b1-4585dba02881",
         "name": "Tags - Create",
         "description": {
           "content": "PROTECTED - Create tag | Save data.id -> {{tagId}}",
@@ -279,7 +279,7 @@
           {
             "listen": "test",
             "script": {
-              "id": "2ce2c971-3b19-4eb0-8298-5be0236d85ce",
+              "id": "d1f2ab0b-62eb-48a1-aa17-b90b96e8e019",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Tags create returns 201', function () {",
@@ -292,13 +292,13 @@
                 "    pm.environment.set('tagId', json.data.id);",
                 "}"
               ],
-              "_lastExecutionId": "b259c116-4eab-4765-a8ed-f6ebee5bb1eb"
+              "_lastExecutionId": "b89d949d-47e4-4dfd-b3e7-3705e73234a8"
             }
           }
         ]
       },
       {
-        "id": "5e5a7f9f-bc8f-433d-ae4b-ed55a330044b",
+        "id": "edb5e329-9291-4d55-8047-c6db897d9c45",
         "name": "Notes - Create",
         "description": {
           "content": "PROTECTED - Create note (uses {{tagId}}) | Save data.id -> {{noteId}}",
@@ -342,7 +342,7 @@
           {
             "listen": "test",
             "script": {
-              "id": "c210758c-267b-46fd-93d9-b15ebf49da5a",
+              "id": "d52541cd-bb3d-420a-9d40-79b1d16b1d99",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Notes create returns 201', function () {",
@@ -355,13 +355,13 @@
                 "    pm.environment.set('noteId', json.data.id);",
                 "}"
               ],
-              "_lastExecutionId": "7298bc3b-5072-4117-b8cc-f853989d5103"
+              "_lastExecutionId": "e802ce12-0976-4360-93df-bc5ac40d74a4"
             }
           }
         ]
       },
       {
-        "id": "3024f205-8d2d-4898-a5b7-5750a8808786",
+        "id": "11275867-2d9d-4a67-bc4a-3747dd799224",
         "name": "Notes - Delete",
         "description": {
           "content": "PROTECTED - Delete note {{noteId}} | Expected: 200 / 404 / 403",
@@ -398,20 +398,20 @@
           {
             "listen": "test",
             "script": {
-              "id": "beaa655d-4877-4739-9ff8-244bdedfa330",
+              "id": "be0375e7-a749-4f0a-912f-3841a65acbef",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Notes delete returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "9696e02c-2045-4797-b22a-683020e8e95b"
+              "_lastExecutionId": "b4188378-5e95-47bb-8388-af84600eb8f7"
             }
           }
         ]
       },
       {
-        "id": "18c9ea95-f10e-4bd7-9e72-a8e548ff9bd3",
+        "id": "8438b3a5-7f85-4871-a76e-21d66a07ec5b",
         "name": "User - Get Profile",
         "description": {
           "content": "PROTECTED - Get authenticated user profile | Auth: Bearer {{token}}",
@@ -447,7 +447,7 @@
           {
             "listen": "test",
             "script": {
-              "id": "aab8b915-0721-45e6-bdea-51f97cfceb31",
+              "id": "ac841673-64fb-4fb2-a038-a0f232aa23e0",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Get profile returns 200', function () {",
@@ -460,13 +460,13 @@
                 "    pm.expect(json.data).to.have.property('name');",
                 "});"
               ],
-              "_lastExecutionId": "a0bb6d01-b848-4a6d-abc7-0dc2d604f3fd"
+              "_lastExecutionId": "4d53050e-96b8-45f9-ac4f-c370453e5607"
             }
           }
         ]
       },
       {
-        "id": "084e367c-bcf3-4c9e-93ae-f0cf94378110",
+        "id": "00806f68-b483-48ee-908a-1811c5f4e239",
         "name": "User - Update Profile",
         "description": {
           "content": "PROTECTED - Update name and email | Auth: Bearer {{token}}",
@@ -511,7 +511,7 @@
           {
             "listen": "test",
             "script": {
-              "id": "53bf4c3c-27bf-4328-b0e1-238e71846d12",
+              "id": "0c627375-4bb9-4b1e-a0bd-53bcf99875e7",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Update profile returns 200', function () {",
@@ -523,13 +523,13 @@
                 "    pm.expect(json.data.name).to.eql('Updated Name');",
                 "});"
               ],
-              "_lastExecutionId": "4e512435-a5fd-42fe-8217-a555a656f760"
+              "_lastExecutionId": "281cbc08-6fab-4890-a540-49c71bd45a40"
             }
           }
         ]
       },
       {
-        "id": "7e66cda0-e7e6-4b33-966c-272c07e42def",
+        "id": "cd6a1952-24c4-4e6f-a4de-11f11414b9d8",
         "name": "User - Update Password",
         "description": {
           "content": "PROTECTED - Update password | Auth: Bearer {{token}}",
@@ -574,20 +574,20 @@
           {
             "listen": "test",
             "script": {
-              "id": "c13aaccf-3bbd-4417-ac20-ab76e99d499b",
+              "id": "e88b3d61-f496-4343-918b-e7338389158b",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Update password returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "246adcf3-6c17-427f-857b-1e9781de3cf6"
+              "_lastExecutionId": "589c90e4-5e81-47c5-8ebd-14264338e0b6"
             }
           }
         ]
       },
       {
-        "id": "36066cfd-5979-4903-941c-b02eba7cd6ea",
+        "id": "34fe4407-727b-469d-8bc0-ef6959f73a6d",
         "name": "Auth - Logout",
         "description": {
           "content": "PROTECTED - Logout | Revoke current token",
@@ -623,14 +623,14 @@
           {
             "listen": "test",
             "script": {
-              "id": "2c31d399-9c56-426e-b4e8-ad098258382b",
+              "id": "33605b16-6798-4661-bf1c-9e9f2d63364e",
               "type": "text/javascript",
               "exec": [
                 "pm.test('Logout returns 200', function () {",
                 "    pm.expect(pm.response.code).to.eql(200);",
                 "});"
               ],
-              "_lastExecutionId": "a8c8059c-f03a-439d-98b8-64affdfd1bb3"
+              "_lastExecutionId": "eda45244-ffac-439c-868e-9363a752aaac"
             }
           }
         ]
@@ -670,22 +670,22 @@
       },
       {
         "type": "any",
-        "value": "21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91",
+        "value": "26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1",
         "key": "token"
       },
       {
         "type": "any",
-        "value": 12,
+        "value": 15,
         "key": "noteId"
       },
       {
         "type": "any",
-        "value": 12,
+        "value": 14,
         "key": "tagId"
       },
       {
         "type": "any",
-        "value": "test.user.1777446800444@example.com",
+        "value": "test.user.1777900390577@example.com",
         "key": "userEmail"
       },
       {
@@ -696,7 +696,7 @@
     ]
   },
   "globals": {
-    "id": "c161a45b-ca76-4e82-b85e-a48e6626e605",
+    "id": "91d02c38-cfdf-454d-a699-3834eaf8051b",
     "values": []
   },
   "run": {
@@ -748,10 +748,10 @@
       }
     },
     "timings": {
-      "responseAverage": 114.36363636363636,
+      "responseAverage": 108.54545454545455,
       "responseMin": 15,
-      "responseMax": 482,
-      "responseSd": 160.94170188288265,
+      "responseMax": 461,
+      "responseSd": 155.35552401821832,
       "dnsAverage": 0,
       "dnsMin": 0,
       "dnsMax": 0,
@@ -760,8 +760,8 @@
       "firstByteMin": 0,
       "firstByteMax": 0,
       "firstByteSd": 0,
-      "started": 1777446800430,
-      "completed": 1777446801897
+      "started": 1777900390565,
+      "completed": 1777900391952
     },
     "executions": [
       {
@@ -774,11 +774,11 @@
           "eof": false,
           "bof": true,
           "cr": false,
-          "ref": "5154583e-da22-4abb-9472-f13611ecb468",
-          "httpRequestId": "77bc46c1-218a-4bd3-b7b8-1d3c54c52c8d"
+          "ref": "3e645535-9e7f-4a32-9eff-0f43b12e8f7d",
+          "httpRequestId": "5430a0cf-5298-4374-9b37-d8628d9d1b47"
         },
         "item": {
-          "id": "263f8e13-5fbb-4a3a-882c-8d552eae5cf7",
+          "id": "5d802635-d922-4dcb-8195-6b637708ee65",
           "name": "Auth - Register",
           "description": {
             "content": "PUBLIC - Create user + return token | Pre-request: unique email generated ({{userEmail}})",
@@ -818,19 +818,19 @@
             {
               "listen": "prerequest",
               "script": {
-                "id": "3be4a04e-a08e-4fc1-bdb1-b711b9b367c0",
+                "id": "1eb6c236-1f11-48c3-a64c-b7c3e4b23faa",
                 "type": "text/javascript",
                 "exec": [
                   "pm.environment.set('userEmail', `test.user.${Date.now()}@example.com`);",
                   "pm.environment.set('userPassword', 'password123');"
                 ],
-                "_lastExecutionId": "7ef0366f-093e-42a8-9080-a0d3143540e3"
+                "_lastExecutionId": "c81af56e-54f2-40aa-8d02-df3905faa7ff"
               }
             },
             {
               "listen": "test",
               "script": {
-                "id": "371b1067-161d-4690-a363-a9eaa60dbed6",
+                "id": "ba39ba28-f807-4360-89f1-ef449a9b16ce",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Register returns 200/201', function () {",
@@ -841,7 +841,7 @@
                   "    pm.response.to.be.json;",
                   "});"
                 ],
-                "_lastExecutionId": "714bf244-3faf-4059-8a61-584adcad1abf"
+                "_lastExecutionId": "95e972ba-ccfe-473d-945f-e67a8ff2ab6d"
               }
             }
           ]
@@ -885,7 +885,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "a668886b-2b6d-49ea-a7d2-564e2ec6fde4",
+              "value": "5941e98d-a269-448f-9557-1d077c4df016",
               "system": true
             },
             {
@@ -912,11 +912,11 @@
           "method": "POST",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user.1777446800444@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+            "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test.user.1777900390577@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
           }
         },
         "response": {
-          "id": "a2e41687-a246-4b8c-8b33-5b32bdb4d7a1",
+          "id": "ec6a209f-a4a4-4dca-8179-e5661aee9a5a",
           "status": "Created",
           "code": 201,
           "header": [
@@ -938,7 +938,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:20 GMT"
+              "value": "Mon, 04 May 2026 13:13:10 GMT"
             },
             {
               "key": "Content-Type",
@@ -1039,6 +1039,14 @@
               58,
               123,
               34,
+              105,
+              100,
+              34,
+              58,
+              49,
+              50,
+              44,
+              34,
               110,
               97,
               109,
@@ -1080,15 +1088,15 @@
               55,
               55,
               55,
-              52,
-              52,
-              54,
-              56,
+              57,
               48,
               48,
-              52,
-              52,
-              52,
+              51,
+              57,
+              48,
+              53,
+              55,
+              55,
               64,
               101,
               120,
@@ -1114,66 +1122,66 @@
               58,
               34,
               50,
-              48,
-              124,
-              54,
-              85,
-              109,
-              106,
-              117,
-              99,
-              79,
-              119,
-              73,
-              100,
-              122,
-              83,
-              98,
-              52,
-              110,
               53,
-              116,
-              114,
-              107,
-              101,
-              102,
-              97,
-              88,
-              52,
-              90,
-              69,
-              75,
+              124,
               82,
-              49,
-              103,
-              55,
-              109,
-              100,
-              79,
-              77,
-              71,
-              73,
-              109,
-              120,
-              119,
-              50,
-              51,
-              51,
-              55,
-              54,
-              52,
-              52,
+              81,
               57,
+              75,
+              118,
+              81,
+              118,
+              51,
+              103,
+              73,
+              107,
+              119,
+              83,
+              113,
+              115,
+              55,
+              68,
+              54,
+              97,
+              48,
+              55,
+              52,
+              52,
+              107,
+              80,
+              73,
+              65,
+              108,
+              48,
+              117,
+              70,
+              105,
+              52,
+              81,
+              102,
+              52,
+              72,
+              88,
+              107,
+              110,
+              51,
+              102,
+              51,
+              51,
+              53,
+              53,
+              54,
+              56,
               34,
               125,
               125
             ]
           },
           "cookie": [],
-          "responseTime": 352,
-          "responseSize": 207
+          "responseTime": 340,
+          "responseSize": 215
         },
-        "id": "263f8e13-5fbb-4a3a-882c-8d552eae5cf7",
+        "id": "5d802635-d922-4dcb-8195-6b637708ee65",
         "assertions": [
           {
             "assertion": "Register returns 200/201",
@@ -1187,15 +1195,15 @@
       },
       {
         "cursor": {
-          "ref": "0b9c11c8-dd44-4a4b-b7df-efccbe31448d",
+          "ref": "afd36dfc-0b98-4a49-ac8b-85ad84e0f9aa",
           "length": 11,
           "cycles": 1,
           "position": 1,
           "iteration": 0,
-          "httpRequestId": "3ec04659-fe7e-458a-919c-24940b461165"
+          "httpRequestId": "90bf7ec0-19f4-4013-8d68-c5a7ec4ab340"
         },
         "item": {
-          "id": "b0eb8d73-6757-4fba-a0fc-e339b2acd0cb",
+          "id": "df216dd2-bdc6-43ed-be13-2c992f91fa16",
           "name": "Auth - Login",
           "description": {
             "content": "PUBLIC - Login | Save data.token -> {{token}}",
@@ -1235,7 +1243,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "184318f0-8699-4949-9641-82fb16e75cdc",
+                "id": "1bd8baf2-4837-4a19-9a82-df43c3f777c5",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Login returns 200', function () {",
@@ -1252,7 +1260,7 @@
                   "    pm.expect(pm.environment.get('token')).to.be.a('string').and.not.empty;",
                   "});"
                 ],
-                "_lastExecutionId": "56691e5c-e895-40f9-8987-02de973cd839"
+                "_lastExecutionId": "d66d267c-7b6b-4bf9-aed5-b11593551930"
               }
             }
           ]
@@ -1296,7 +1304,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "2ab9fcff-2368-49f0-9ba7-d69d269bf675",
+              "value": "566259a7-15c1-4f01-893c-6ce06cace30e",
               "system": true
             },
             {
@@ -1323,11 +1331,11 @@
           "method": "POST",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"email\": \"test.user.1777446800444@example.com\",\n  \"password\": \"password123\"\n}"
+            "raw": "{\n  \"email\": \"test.user.1777900390577@example.com\",\n  \"password\": \"password123\"\n}"
           }
         },
         "response": {
-          "id": "5339aaaf-de2f-4dbe-bda8-a8767a19ffba",
+          "id": "4d970b46-5467-4e8e-824a-aa0d87e55fa7",
           "status": "OK",
           "code": 200,
           "header": [
@@ -1349,7 +1357,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -1438,6 +1446,14 @@
               58,
               123,
               34,
+              105,
+              100,
+              34,
+              58,
+              49,
+              50,
+              44,
+              34,
               110,
               97,
               109,
@@ -1479,15 +1495,15 @@
               55,
               55,
               55,
-              52,
-              52,
-              54,
-              56,
+              57,
               48,
               48,
-              52,
-              52,
-              52,
+              51,
+              57,
+              48,
+              53,
+              55,
+              55,
               64,
               101,
               120,
@@ -1513,55 +1529,55 @@
               58,
               34,
               50,
-              49,
-              124,
-              103,
-              101,
-              101,
-              56,
-              104,
-              113,
-              102,
-              83,
-              66,
-              82,
-              90,
-              80,
-              118,
-              71,
-              107,
-              101,
-              109,
-              52,
-              76,
-              84,
-              51,
-              122,
-              120,
-              102,
-              52,
-              110,
-              112,
-              48,
-              121,
-              77,
-              122,
-              104,
-              70,
-              48,
-              83,
-              84,
-              90,
-              57,
-              99,
-              105,
-              102,
-              100,
-              50,
-              102,
               54,
+              124,
+              76,
+              66,
+              117,
               98,
+              55,
+              100,
+              71,
+              111,
+              73,
+              112,
+              109,
+              53,
+              66,
+              112,
+              77,
+              73,
+              66,
+              54,
+              56,
+              103,
+              122,
+              66,
+              117,
+              74,
+              66,
+              119,
+              122,
+              72,
+              120,
+              54,
+              83,
+              116,
+              76,
+              81,
+              113,
+              85,
+              75,
+              115,
+              113,
+              67,
+              48,
+              99,
+              101,
+              54,
+              102,
               57,
+              97,
               49,
               34,
               125,
@@ -1569,10 +1585,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 263,
-          "responseSize": 195
+          "responseTime": 254,
+          "responseSize": 203
         },
-        "id": "b0eb8d73-6757-4fba-a0fc-e339b2acd0cb",
+        "id": "df216dd2-bdc6-43ed-be13-2c992f91fa16",
         "assertions": [
           {
             "assertion": "Login returns 200",
@@ -1586,15 +1602,15 @@
       },
       {
         "cursor": {
-          "ref": "ea2378da-7986-4873-bd3d-0f7275967788",
+          "ref": "3ee20e10-dd90-4df0-b6c6-c694f20fac6f",
           "length": 11,
           "cycles": 1,
           "position": 2,
           "iteration": 0,
-          "httpRequestId": "49618980-cea4-4129-9c9d-b4b1efdfb442"
+          "httpRequestId": "eee2e7c2-1225-4597-b944-834f3ae65934"
         },
         "item": {
-          "id": "c23704d3-475d-4bad-9b99-d4e558790f98",
+          "id": "524ff234-09e3-416f-9dbb-0fa7f97d4c40",
           "name": "Notes - List",
           "description": {
             "content": "PROTECTED - List notes | Auth: Bearer {{token}}",
@@ -1630,14 +1646,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "f41e2f1a-b754-469e-ae20-6aeb160079f2",
+                "id": "4a0a35fd-2af0-4c2f-abe4-4139f76cec31",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Notes list returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "5fd34677-3780-4a07-8462-f965939fe01d"
+                "_lastExecutionId": "e698c681-2518-4b89-8208-99ae46116eb0"
               }
             }
           ]
@@ -1667,7 +1683,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -1681,7 +1697,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "7eabf5cd-3c31-4685-9f9c-145898ca2809",
+              "value": "0c814440-994d-4fb4-bb00-6d09da5aa758",
               "system": true
             },
             {
@@ -1703,7 +1719,7 @@
           "method": "GET"
         },
         "response": {
-          "id": "28a988c4-2cbd-4817-ab65-60071b793473",
+          "id": "b7c79b3c-35dd-43ae-8d3c-51c2231c8803",
           "status": "OK",
           "code": 200,
           "header": [
@@ -1725,7 +1741,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -1820,10 +1836,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 29,
+          "responseTime": 16,
           "responseSize": 70
         },
-        "id": "c23704d3-475d-4bad-9b99-d4e558790f98",
+        "id": "524ff234-09e3-416f-9dbb-0fa7f97d4c40",
         "assertions": [
           {
             "assertion": "Notes list returns 200",
@@ -1833,15 +1849,15 @@
       },
       {
         "cursor": {
-          "ref": "e5853887-cacf-465f-8a95-d1aace760986",
+          "ref": "0678bb24-76af-4c77-9a20-01412691e86e",
           "length": 11,
           "cycles": 1,
           "position": 3,
           "iteration": 0,
-          "httpRequestId": "7ca59285-3e85-444f-a91e-01f4e95bc45d"
+          "httpRequestId": "9965fef5-3d00-4335-8e88-f5609f6c0211"
         },
         "item": {
-          "id": "5e8ef5be-6f7a-4d57-9dc2-ab35c7f1cf31",
+          "id": "9b392ea5-38ec-4bd2-89e4-a969949ed828",
           "name": "Tags - List",
           "description": {
             "content": "PROTECTED - List tags | Auth: Bearer {{token}}",
@@ -1877,14 +1893,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "454ae2b3-8c15-4ed4-9bc1-97cb17c0fc71",
+                "id": "f7eda7e2-39a8-4bad-9c74-b4605fe99ec1",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Tags list returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "5bbb0f76-c6ff-4d3a-a87d-c85b61654625"
+                "_lastExecutionId": "f90d0755-f036-4572-bb88-cfe7420c709a"
               }
             }
           ]
@@ -1914,7 +1930,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -1928,7 +1944,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "6ce532da-ca80-498d-bde1-ec1039c51ea9",
+              "value": "ccc7f50a-cc5e-420d-af69-1b1f61424509",
               "system": true
             },
             {
@@ -1950,7 +1966,7 @@
           "method": "GET"
         },
         "response": {
-          "id": "dbea70a7-bcaf-49f7-abd2-dffe4c562271",
+          "id": "7ebb285f-df73-485e-836e-01eee7892843",
           "status": "OK",
           "code": 200,
           "header": [
@@ -1972,7 +1988,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -2066,10 +2082,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 17,
+          "responseTime": 15,
           "responseSize": 69
         },
-        "id": "5e8ef5be-6f7a-4d57-9dc2-ab35c7f1cf31",
+        "id": "9b392ea5-38ec-4bd2-89e4-a969949ed828",
         "assertions": [
           {
             "assertion": "Tags list returns 200",
@@ -2079,15 +2095,15 @@
       },
       {
         "cursor": {
-          "ref": "8940f58c-bfa7-482c-8a99-938365e0d91e",
+          "ref": "875fffa2-56e3-4dd8-9a5a-ace48d639e0c",
           "length": 11,
           "cycles": 1,
           "position": 4,
           "iteration": 0,
-          "httpRequestId": "452f6973-6803-4c7c-b8a4-abddc14789a0"
+          "httpRequestId": "b7e2853d-a3ac-47a2-966f-fb7acc861f5e"
         },
         "item": {
-          "id": "1e91ec37-fb1a-4461-b3dc-77ee85610870",
+          "id": "f4d031e8-947e-4136-a4b1-4585dba02881",
           "name": "Tags - Create",
           "description": {
             "content": "PROTECTED - Create tag | Save data.id -> {{tagId}}",
@@ -2131,7 +2147,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "2ce2c971-3b19-4eb0-8298-5be0236d85ce",
+                "id": "d1f2ab0b-62eb-48a1-aa17-b90b96e8e019",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Tags create returns 201', function () {",
@@ -2144,7 +2160,7 @@
                   "    pm.environment.set('tagId', json.data.id);",
                   "}"
                 ],
-                "_lastExecutionId": "b259c116-4eab-4765-a8ed-f6ebee5bb1eb"
+                "_lastExecutionId": "b89d949d-47e4-4dfd-b3e7-3705e73234a8"
               }
             }
           ]
@@ -2178,7 +2194,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -2192,7 +2208,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "f8582660-d379-42f9-800b-44d0361345ea",
+              "value": "768f8628-9dc9-42cd-afc9-55ee171f6784",
               "system": true
             },
             {
@@ -2223,7 +2239,7 @@
           }
         },
         "response": {
-          "id": "10635bd1-02e7-48b4-b08b-67b81b0a57de",
+          "id": "29df2ef6-bde2-422c-9998-a5c3a6ff390a",
           "status": "Created",
           "code": 201,
           "header": [
@@ -2245,7 +2261,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -2339,7 +2355,7 @@
               34,
               58,
               49,
-              50,
+              52,
               44,
               34,
               110,
@@ -2373,7 +2389,7 @@
               34,
               58,
               49,
-              49,
+              50,
               125,
               125
             ]
@@ -2382,7 +2398,7 @@
           "responseTime": 19,
           "responseSize": 109
         },
-        "id": "1e91ec37-fb1a-4461-b3dc-77ee85610870",
+        "id": "f4d031e8-947e-4136-a4b1-4585dba02881",
         "assertions": [
           {
             "assertion": "Tags create returns 201",
@@ -2392,15 +2408,15 @@
       },
       {
         "cursor": {
-          "ref": "5914ed13-178a-469d-a976-966eaf97d12b",
+          "ref": "2b3a1671-e5e8-4987-8083-96bae1e85661",
           "length": 11,
           "cycles": 1,
           "position": 5,
           "iteration": 0,
-          "httpRequestId": "1412987f-4353-447b-936a-ce2de6622028"
+          "httpRequestId": "f93d285d-6ddb-410a-bad9-59c8730f4a87"
         },
         "item": {
-          "id": "5e5a7f9f-bc8f-433d-ae4b-ed55a330044b",
+          "id": "edb5e329-9291-4d55-8047-c6db897d9c45",
           "name": "Notes - Create",
           "description": {
             "content": "PROTECTED - Create note (uses {{tagId}}) | Save data.id -> {{noteId}}",
@@ -2444,7 +2460,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "c210758c-267b-46fd-93d9-b15ebf49da5a",
+                "id": "d52541cd-bb3d-420a-9d40-79b1d16b1d99",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Notes create returns 201', function () {",
@@ -2457,7 +2473,7 @@
                   "    pm.environment.set('noteId', json.data.id);",
                   "}"
                 ],
-                "_lastExecutionId": "7298bc3b-5072-4117-b8cc-f853989d5103"
+                "_lastExecutionId": "e802ce12-0976-4360-93df-bc5ac40d74a4"
               }
             }
           ]
@@ -2491,7 +2507,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -2505,7 +2521,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "a721202c-2ddf-4347-b76f-132fa68d5939",
+              "value": "9fd6be25-adc7-4617-9e84-525fe0194dbd",
               "system": true
             },
             {
@@ -2532,11 +2548,11 @@
           "method": "POST",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"text\": \"Created from Postman collection\",\n  \"tag_id\": 12\n}"
+            "raw": "{\n  \"text\": \"Created from Postman collection\",\n  \"tag_id\": 14\n}"
           }
         },
         "response": {
-          "id": "d4b1ff4b-c224-44ba-9b3c-9ecd2e191c1c",
+          "id": "7fd1e064-ee9c-4ed7-86a2-4740093a1c64",
           "status": "Created",
           "code": 201,
           "header": [
@@ -2558,7 +2574,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -2653,7 +2669,7 @@
               34,
               58,
               49,
-              50,
+              53,
               44,
               34,
               117,
@@ -2666,7 +2682,7 @@
               34,
               58,
               49,
-              49,
+              50,
               44,
               34,
               116,
@@ -2678,7 +2694,7 @@
               34,
               58,
               49,
-              50,
+              52,
               44,
               34,
               116,
@@ -2741,18 +2757,18 @@
               54,
               45,
               48,
-              52,
+              53,
               45,
-              50,
-              57,
-              84,
               48,
-              55,
+              52,
+              84,
+              49,
+              51,
               58,
               49,
               51,
               58,
-              50,
+              49,
               49,
               46,
               48,
@@ -2768,10 +2784,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 20,
+          "responseTime": 19,
           "responseSize": 185
         },
-        "id": "5e5a7f9f-bc8f-433d-ae4b-ed55a330044b",
+        "id": "edb5e329-9291-4d55-8047-c6db897d9c45",
         "assertions": [
           {
             "assertion": "Notes create returns 201",
@@ -2781,15 +2797,15 @@
       },
       {
         "cursor": {
-          "ref": "cba6e198-a54c-48bc-94b0-7ce388885c7b",
+          "ref": "6ef338f7-d4b5-4bcc-b427-a8d18a4b7fd0",
           "length": 11,
           "cycles": 1,
           "position": 6,
           "iteration": 0,
-          "httpRequestId": "6291a9e2-9ce4-4e9c-82c0-149c5a8c6907"
+          "httpRequestId": "15d3900c-3114-485a-8561-fd0f5bbd6918"
         },
         "item": {
-          "id": "3024f205-8d2d-4898-a5b7-5750a8808786",
+          "id": "11275867-2d9d-4a67-bc4a-3747dd799224",
           "name": "Notes - Delete",
           "description": {
             "content": "PROTECTED - Delete note {{noteId}} | Expected: 200 / 404 / 403",
@@ -2826,14 +2842,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "beaa655d-4877-4739-9ff8-244bdedfa330",
+                "id": "be0375e7-a749-4f0a-912f-3841a65acbef",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Notes delete returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "9696e02c-2045-4797-b22a-683020e8e95b"
+                "_lastExecutionId": "b4188378-5e95-47bb-8388-af84600eb8f7"
               }
             }
           ]
@@ -2846,7 +2862,7 @@
               "api",
               "v1",
               "notes",
-              "12"
+              "15"
             ],
             "host": [
               "127",
@@ -2864,7 +2880,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -2878,7 +2894,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "cf19c6bd-f164-482b-8918-b075f5331c77",
+              "value": "ebb7d078-a083-4567-ba06-849b5b3b742a",
               "system": true
             },
             {
@@ -2900,7 +2916,7 @@
           "method": "DELETE"
         },
         "response": {
-          "id": "eeb8f560-9523-4431-9eb9-8950246f9f97",
+          "id": "65484bf8-1afd-4bf3-bc5f-93d04205e46c",
           "status": "OK",
           "code": 200,
           "header": [
@@ -2922,7 +2938,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -3018,10 +3034,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 15,
+          "responseTime": 16,
           "responseSize": 71
         },
-        "id": "3024f205-8d2d-4898-a5b7-5750a8808786",
+        "id": "11275867-2d9d-4a67-bc4a-3747dd799224",
         "assertions": [
           {
             "assertion": "Notes delete returns 200",
@@ -3031,15 +3047,15 @@
       },
       {
         "cursor": {
-          "ref": "61c23430-b000-401e-99e4-c5995742fad3",
+          "ref": "c6c291f6-450b-4118-9c0d-00754846731b",
           "length": 11,
           "cycles": 1,
           "position": 7,
           "iteration": 0,
-          "httpRequestId": "1d48caf4-bd8e-4758-a839-a650dfe8684a"
+          "httpRequestId": "73c93273-9a6d-4783-8386-8c57f1aa62cc"
         },
         "item": {
-          "id": "18c9ea95-f10e-4bd7-9e72-a8e548ff9bd3",
+          "id": "8438b3a5-7f85-4871-a76e-21d66a07ec5b",
           "name": "User - Get Profile",
           "description": {
             "content": "PROTECTED - Get authenticated user profile | Auth: Bearer {{token}}",
@@ -3075,7 +3091,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "aab8b915-0721-45e6-bdea-51f97cfceb31",
+                "id": "ac841673-64fb-4fb2-a038-a0f232aa23e0",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Get profile returns 200', function () {",
@@ -3088,7 +3104,7 @@
                   "    pm.expect(json.data).to.have.property('name');",
                   "});"
                 ],
-                "_lastExecutionId": "a0bb6d01-b848-4a6d-abc7-0dc2d604f3fd"
+                "_lastExecutionId": "4d53050e-96b8-45f9-ac4f-c370453e5607"
               }
             }
           ]
@@ -3118,7 +3134,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -3132,7 +3148,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "4f7ce9d1-6396-4cb6-a555-2e1f60a9a3ca",
+              "value": "e4ac9224-1499-4c64-b9dd-b83fb9d2a15a",
               "system": true
             },
             {
@@ -3154,7 +3170,7 @@
           "method": "GET"
         },
         "response": {
-          "id": "e83f15ed-7438-4f8b-905b-4c34292f338b",
+          "id": "f72fecbf-8030-477e-a554-c4b7e80853d6",
           "status": "OK",
           "code": 200,
           "header": [
@@ -3176,7 +3192,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -3268,7 +3284,7 @@
               34,
               58,
               49,
-              49,
+              50,
               44,
               34,
               110,
@@ -3312,15 +3328,15 @@
               55,
               55,
               55,
-              52,
-              52,
-              54,
-              56,
+              57,
               48,
               48,
-              52,
-              52,
-              52,
+              51,
+              57,
+              48,
+              53,
+              55,
+              55,
               64,
               101,
               120,
@@ -3380,18 +3396,18 @@
               54,
               45,
               48,
-              52,
+              53,
               45,
-              50,
-              57,
-              84,
               48,
-              55,
+              52,
+              84,
+              49,
+              51,
               58,
               49,
               51,
               58,
-              50,
+              49,
               48,
               46,
               48,
@@ -3423,18 +3439,18 @@
               54,
               45,
               48,
-              52,
+              53,
               45,
-              50,
-              57,
-              84,
               48,
-              55,
+              52,
+              84,
+              49,
+              51,
               58,
               49,
               51,
               58,
-              50,
+              49,
               48,
               46,
               48,
@@ -3453,7 +3469,7 @@
           "responseTime": 16,
           "responseSize": 249
         },
-        "id": "18c9ea95-f10e-4bd7-9e72-a8e548ff9bd3",
+        "id": "8438b3a5-7f85-4871-a76e-21d66a07ec5b",
         "assertions": [
           {
             "assertion": "Get profile returns 200",
@@ -3467,15 +3483,15 @@
       },
       {
         "cursor": {
-          "ref": "b497f90a-6775-444e-ba5b-7b95a5e960b3",
+          "ref": "ecd5255a-e0e1-4701-a666-716f6392d7ce",
           "length": 11,
           "cycles": 1,
           "position": 8,
           "iteration": 0,
-          "httpRequestId": "b012c519-afa4-443a-8930-436d6e9edf21"
+          "httpRequestId": "65ce3f2a-719e-449d-9187-bed771dbbc26"
         },
         "item": {
-          "id": "084e367c-bcf3-4c9e-93ae-f0cf94378110",
+          "id": "00806f68-b483-48ee-908a-1811c5f4e239",
           "name": "User - Update Profile",
           "description": {
             "content": "PROTECTED - Update name and email | Auth: Bearer {{token}}",
@@ -3520,7 +3536,7 @@
             {
               "listen": "test",
               "script": {
-                "id": "53bf4c3c-27bf-4328-b0e1-238e71846d12",
+                "id": "0c627375-4bb9-4b1e-a0bd-53bcf99875e7",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Update profile returns 200', function () {",
@@ -3532,7 +3548,7 @@
                   "    pm.expect(json.data.name).to.eql('Updated Name');",
                   "});"
                 ],
-                "_lastExecutionId": "4e512435-a5fd-42fe-8217-a555a656f760"
+                "_lastExecutionId": "281cbc08-6fab-4890-a540-49c71bd45a40"
               }
             }
           ]
@@ -3567,7 +3583,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -3581,7 +3597,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "bc8db2ed-4160-4e87-bde5-fcc972a2e6d8",
+              "value": "9efc5ffc-ef31-4df7-b90f-a992411aabc0",
               "system": true
             },
             {
@@ -3608,11 +3624,11 @@
           "method": "PUT",
           "body": {
             "mode": "raw",
-            "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"test.user.1777446800444@example.com\"\n}"
+            "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"test.user.1777900390577@example.com\"\n}"
           }
         },
         "response": {
-          "id": "470f0a56-2d24-4b12-be8f-66558c17e7a8",
+          "id": "4062ce49-d0fd-485e-b0e9-aaff7e953eed",
           "status": "OK",
           "code": 200,
           "header": [
@@ -3634,7 +3650,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -3732,7 +3748,7 @@
               34,
               58,
               49,
-              49,
+              50,
               44,
               34,
               110,
@@ -3779,15 +3795,15 @@
               55,
               55,
               55,
-              52,
-              52,
-              54,
-              56,
+              57,
               48,
               48,
-              52,
-              52,
-              52,
+              51,
+              57,
+              48,
+              53,
+              55,
+              55,
               64,
               101,
               120,
@@ -3847,18 +3863,18 @@
               54,
               45,
               48,
-              52,
+              53,
               45,
-              50,
-              57,
-              84,
               48,
-              55,
+              52,
+              84,
+              49,
+              51,
               58,
               49,
               51,
               58,
-              50,
+              49,
               48,
               46,
               48,
@@ -3890,18 +3906,18 @@
               54,
               45,
               48,
-              52,
+              53,
               45,
-              50,
-              57,
-              84,
               48,
-              55,
+              52,
+              84,
+              49,
+              51,
               58,
               49,
               51,
               58,
-              50,
+              49,
               49,
               46,
               48,
@@ -3917,10 +3933,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 25,
+          "responseTime": 22,
           "responseSize": 258
         },
-        "id": "084e367c-bcf3-4c9e-93ae-f0cf94378110",
+        "id": "00806f68-b483-48ee-908a-1811c5f4e239",
         "assertions": [
           {
             "assertion": "Update profile returns 200",
@@ -3934,15 +3950,15 @@
       },
       {
         "cursor": {
-          "ref": "54bb3416-95cd-47ee-a171-85efb86663d3",
+          "ref": "7735fca5-96d7-4647-b447-44366b45768d",
           "length": 11,
           "cycles": 1,
           "position": 9,
           "iteration": 0,
-          "httpRequestId": "6361cc00-023c-4ded-9c7e-d34796daee2f"
+          "httpRequestId": "ae4d6d82-09f5-4416-b9c7-037b25f8cf43"
         },
         "item": {
-          "id": "7e66cda0-e7e6-4b33-966c-272c07e42def",
+          "id": "cd6a1952-24c4-4e6f-a4de-11f11414b9d8",
           "name": "User - Update Password",
           "description": {
             "content": "PROTECTED - Update password | Auth: Bearer {{token}}",
@@ -3987,14 +4003,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "c13aaccf-3bbd-4417-ac20-ab76e99d499b",
+                "id": "e88b3d61-f496-4343-918b-e7338389158b",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Update password returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "246adcf3-6c17-427f-857b-1e9781de3cf6"
+                "_lastExecutionId": "589c90e4-5e81-47c5-8ebd-14264338e0b6"
               }
             }
           ]
@@ -4029,7 +4045,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -4043,7 +4059,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "7ab1b345-f75a-4f66-ba80-9d8ecdf24070",
+              "value": "e88e7826-25ae-4e7c-9902-d3bb5c8e5be4",
               "system": true
             },
             {
@@ -4074,7 +4090,7 @@
           }
         },
         "response": {
-          "id": "91f4e996-8e5b-40e9-b9f9-e610649d731d",
+          "id": "ffa1e702-0355-42b7-b69f-90b6fba63493",
           "status": "OK",
           "code": 200,
           "header": [
@@ -4096,7 +4112,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -4196,10 +4212,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 482,
+          "responseTime": 461,
           "responseSize": 75
         },
-        "id": "7e66cda0-e7e6-4b33-966c-272c07e42def",
+        "id": "cd6a1952-24c4-4e6f-a4de-11f11414b9d8",
         "assertions": [
           {
             "assertion": "Update password returns 200",
@@ -4209,15 +4225,15 @@
       },
       {
         "cursor": {
-          "ref": "0f69d06c-8039-47ae-8ad5-639061a05af3",
+          "ref": "58f9fd87-8f72-4a71-8206-f546d7e2a3e2",
           "length": 11,
           "cycles": 1,
           "position": 10,
           "iteration": 0,
-          "httpRequestId": "b2bebf6e-8c07-4e7a-8898-807f5f554d93"
+          "httpRequestId": "4f65f7cb-aaed-4dee-a245-05b84fb17552"
         },
         "item": {
-          "id": "36066cfd-5979-4903-941c-b02eba7cd6ea",
+          "id": "34fe4407-727b-469d-8bc0-ef6959f73a6d",
           "name": "Auth - Logout",
           "description": {
             "content": "PROTECTED - Logout | Revoke current token",
@@ -4253,14 +4269,14 @@
             {
               "listen": "test",
               "script": {
-                "id": "2c31d399-9c56-426e-b4e8-ad098258382b",
+                "id": "33605b16-6798-4661-bf1c-9e9f2d63364e",
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Logout returns 200', function () {",
                   "    pm.expect(pm.response.code).to.eql(200);",
                   "});"
                 ],
-                "_lastExecutionId": "a8c8059c-f03a-439d-98b8-64affdfd1bb3"
+                "_lastExecutionId": "eda45244-ffac-439c-868e-9363a752aaac"
               }
             }
           ]
@@ -4290,7 +4306,7 @@
             },
             {
               "key": "Authorization",
-              "value": "Bearer 21|gee8hqfSBRZPvGkem4LT3zxf4np0yMzhF0STZ9cifd2f6b91"
+              "value": "Bearer 26|LBub7dGoIpm5BpMIB68gzBuJBwzHx6StLQqUKsqC0ce6f9a1"
             },
             {
               "key": "User-Agent",
@@ -4304,7 +4320,7 @@
             },
             {
               "key": "Postman-Token",
-              "value": "867f9285-203c-43b6-ac01-c3eb06dc171b",
+              "value": "08d9414a-568e-4cdf-9054-5af302bef473",
               "system": true
             },
             {
@@ -4331,7 +4347,7 @@
           "method": "POST"
         },
         "response": {
-          "id": "297419a4-f9c5-4b9f-8593-1062d8051003",
+          "id": "448718f4-e855-4b4b-baed-f1aca420b8bb",
           "status": "OK",
           "code": 200,
           "header": [
@@ -4353,7 +4369,7 @@
             },
             {
               "key": "Date",
-              "value": "Wed, 29 Apr 2026 07:13:21 GMT"
+              "value": "Mon, 04 May 2026 13:13:11 GMT"
             },
             {
               "key": "Content-Type",
@@ -4441,10 +4457,10 @@
             ]
           },
           "cookie": [],
-          "responseTime": 20,
+          "responseTime": 16,
           "responseSize": 63
         },
-        "id": "36066cfd-5979-4903-941c-b02eba7cd6ea",
+        "id": "34fe4407-727b-469d-8bc0-ef6959f73a6d",
         "assertions": [
           {
             "assertion": "Logout returns 200",
@@ -4454,7 +4470,7 @@
       }
     ],
     "transfers": {
-      "responseTotal": 1551
+      "responseTotal": 1567
     },
     "failures": [],
     "error": null
