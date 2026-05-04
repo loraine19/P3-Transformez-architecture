@@ -1,14 +1,10 @@
 <?php
-// Auth service - handles register, login, logout business logic
-// called by AuthController, returns data arrays or null on failure
 
 namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
-
-// DONE: Implemented real register/login/logout logic with Sanctum tokens.
 
 class AuthService
 {
@@ -27,7 +23,7 @@ class AuthService
         $token = $user->createToken('api-token')->plainTextToken;
 
         return [
-            'user'  => ['name' => $user->name, 'email' => $user->email],
+            'user'  => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email],
             'token' => $token,
         ];
     }
@@ -48,7 +44,7 @@ class AuthService
         $token = $user->createToken('api-token')->plainTextToken;
 
         return [
-            'user'  => ['name' => $user->name, 'email' => $user->email],
+            'user'  => ['id' => $user->id, 'name' => $user->name, 'email' => $user->email],
             'token' => $token,
         ];
     }

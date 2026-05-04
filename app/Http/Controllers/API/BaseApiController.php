@@ -5,10 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 
-// DONE: Added shared JSON response helpers for API controllers.
-
 class BaseApiController extends Controller
 {
+    /* SUCCESS */
     protected function success(string $message, mixed $data = null, int $status = 200): JsonResponse
     {
         return response()->json([
@@ -18,6 +17,7 @@ class BaseApiController extends Controller
         ], $status);
     }
 
+    /* ERROR */
     protected function error(string $message, mixed $data = null, int $status = 400): JsonResponse
     {
         return response()->json([

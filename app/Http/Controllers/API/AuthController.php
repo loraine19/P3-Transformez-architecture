@@ -1,6 +1,4 @@
 <?php
-// Auth controller - register, login, logout endpoints
-// FormRequest handles validation (422 auto), delegates to AuthService, returns standard JSON
 
 namespace App\Http\Controllers\API;
 
@@ -9,8 +7,6 @@ use App\Http\Requests\RegisterRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
-// DONE: Implemented register/login/logout with FormRequest validation and correct HTTP codes.
 
 class AuthController extends BaseApiController
 {

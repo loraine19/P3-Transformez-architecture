@@ -1,6 +1,4 @@
 <?php
-// Tag controller - list and create endpoints
-// FormRequest handles validation (422 auto), delegates to TagService, returns standard JSON
 
 namespace App\Http\Controllers\API;
 
@@ -8,8 +6,6 @@ use App\Http\Requests\StoreTagRequest;
 use App\Services\TagService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
-// DONE: Cleaned up dead auth checks (handled by middleware), FormRequest validation pattern.
 
 class TagController extends BaseApiController
 {

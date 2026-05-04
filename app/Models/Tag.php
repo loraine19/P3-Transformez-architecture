@@ -1,6 +1,4 @@
 <?php
-// Tag model - category for notes, one tag can have many notes
-// only name field, no color or other fields
 
 namespace App\Models;
 
@@ -12,8 +10,6 @@ class Tag extends Model
 {
     use HasFactory;
 
-    // DONE: Added user ownership field for tag security.
-    // only these fields are allowed for mass assignment
     protected $fillable = [
         'user_id',
         'name',
@@ -23,7 +19,6 @@ class Tag extends Model
     /* user */
     public function user()
     {
-        // DONE: Tag now belongs to one user.
         return $this->belongsTo(User::class);
     }
 
@@ -31,7 +26,6 @@ class Tag extends Model
     /* notes */
     public function notes()
     {
-        // one tag has many notes - like a one-to-many in sql
         return $this->hasMany(Note::class);
     }
 }

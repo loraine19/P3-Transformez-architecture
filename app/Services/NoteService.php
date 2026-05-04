@@ -1,13 +1,9 @@
 <?php
-// Note service - list, create, delete notes scoped to authenticated user
-// ownership enforced on delete - 403 if user does not own the note
 
 namespace App\Services;
 
 use App\Models\Note;
 use Illuminate\Auth\Access\AuthorizationException;
-
-// DONE: Implemented real note logic with user ownership enforcement.
 
 class NoteService
 {
