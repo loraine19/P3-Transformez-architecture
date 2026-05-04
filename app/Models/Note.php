@@ -1,6 +1,4 @@
 <?php
-// Note model - one note belongs to one user and one tag
-// fillable = only these fields can be saved in db
 
 namespace App\Models;
 

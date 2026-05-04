@@ -6,8 +6,6 @@ use App\Http\Controllers\API\TagController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
 
-// DONE: Protected routes with auth:sanctum middleware - public: register/login, protected: logout/notes/tags.
-
 /*
 |--------------------------------------------------------------------------
 | API Routes

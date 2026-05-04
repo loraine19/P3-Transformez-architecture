@@ -1,6 +1,4 @@
 <?php
-// User service - handles profile and password business logic
-// called by UserController, follows same pattern as AuthService / NoteService / TagService
 
 namespace App\Services;
 

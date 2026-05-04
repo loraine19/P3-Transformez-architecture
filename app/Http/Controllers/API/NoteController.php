@@ -1,6 +1,4 @@
 <?php
-// Note controller - list, create, delete endpoints
-// FormRequest handles validation (422 auto), delegates to NoteService, returns standard JSON
 
 namespace App\Http\Controllers\API;
 
@@ -8,8 +6,6 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Services\NoteService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
-// DONE: Implemented notes list/create/delete with FormRequest validation, ownership, and HTTP codes.
 
 class NoteController extends BaseApiController
 {

@@ -1,12 +1,8 @@
 <?php
-// Tag service - list and create tags scoped to authenticated user
-// called by TagController, returns data arrays
 
 namespace App\Services;
 
 use App\Models\Tag;
-
-// DONE: Added user-scoped tag logic used by TagController.
 
 class TagService
 {
